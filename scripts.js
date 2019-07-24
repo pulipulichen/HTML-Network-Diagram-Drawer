@@ -22,14 +22,16 @@ var app = new Vue({
       $(this.$refs.modal).find('.ui.dropdown').dropdown()
 
       // 載入檔案
-      //$.get('./data.txt', (data) => {
-      //  this.input = data
-      //})
+      $.get('./data.csv', (data) => {
+        this.input = data
+      })
 
       FileHelper.initDropUpload((e) => {
         //console.log(e)
         this.upload(e)
       })
+      
+      SigmaJSHelper.demo()
     },
     persist: function () {
       VueHelper.persist(this, 'fileType')
