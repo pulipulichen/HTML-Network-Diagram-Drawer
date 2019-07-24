@@ -332,8 +332,7 @@
 
         animation = {
           duration: _settings('mouseZoomDuration')
-        };
-
+        };        
         sigma.utils.zoomTo(_camera, pos.x, pos.y, ratio, animation);
 
         if (e.preventDefault)

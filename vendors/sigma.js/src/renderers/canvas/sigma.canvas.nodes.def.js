@@ -23,7 +23,7 @@
       Math.PI * 2,
       true
     );
-
+    
     context.closePath();
     context.fill();
   };

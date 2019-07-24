@@ -37,7 +37,7 @@
 
     context.fillText(
       node.label,
-      Math.round(node[prefix + 'x'] + size + 30),
+      Math.round(node[prefix + 'x'] + size + 3),
       Math.round(node[prefix + 'y'] + fontSize / 3)
     );
   };
