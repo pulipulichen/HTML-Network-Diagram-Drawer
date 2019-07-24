@@ -79,7 +79,8 @@ and open the template in the editor.
 
 <script src="vendors/sigma.js/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
 
-<script src="vendors/sigma.js/plugins/sigma.layout.noverlap/sigma.layout.noverlap.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.layout.dagre/dagre.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.layout.dagre/sigma.layout.dagre.js"></script>
 
   </head>
   <body>
@@ -280,20 +281,46 @@ for (let i = 0; i < n; i++) {
   });
 }
 
+let edgesList = []
 for (let i = 0; i < n*1.5; i++) {
+  let source = 'n' + parseInt(Math.random() * n)
+  let target = 'n' + parseInt(Math.random() * n)
+  let type = 'arrow'
+  if (source === target) {
+    type = 'curvedArrow'
+  }
+  else {
+    let key = [source, target].sort().join('-')
+    if (typeof(edgesList[key]) === 'undefined') {
+      edgesList[key] = [g.edges.length]
+    }
+    else {
+      type = 'curvedArrow'
+      console.log(i, edgesList[key])
+      if (edgesList[key].length > 0) {
+        edgesList[key].forEach(e => {
+          //e.type = 'curvedArrow'
+          g.edges[e].type = 'curvedArrow'
+        })
+        edgesList[key] = []
+      }
+    }
+  }
+  
   g.edges.push({
     id: 'e' + i,
     label: 'Edge ' + i,
-    source: 'n' + parseInt(Math.random() * n),
-    target: 'n' + parseInt(Math.random() * n),
+    source: source,
+    target: target,
     size: 30,
     color: '#ccc',
     //type: 'curvedArrow',
+    type: type,
     count: i,
     minArrowSize: 300
   });
 }
-
+console.log(edgesList)
 
 
 let ss = new sigma({
@@ -362,17 +389,12 @@ setTimeout(() => {
 
 // ------------------------------------------
 var config = {
-  rankdir: 'TB'
+  directed: true,
+  rankdir: 'BT'
 };
 var listener = sigma.layouts.dagre.start(ss, config);
-
-// Bind all events:
-listener.bind('stop', function(event) {
-  console.log(event.type);
-  var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
-});
-
 sigma.layouts.dagre.start(ss);
+var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
 
 </script>
   </body>
