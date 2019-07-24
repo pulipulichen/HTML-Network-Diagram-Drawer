@@ -2,7 +2,7 @@ let SigmaJSHelper = {
   demo: function () {
     var i,
             s,
-            N = 2,
+            N = 10,
             E = 1,
             L = 3,
             g = {
@@ -17,8 +17,8 @@ let SigmaJSHelper = {
         label: 'Node ' + i,
         //x: (0.3 + 0.5 * i),
         //y: (0.3 + 0.5 * i),
-        x: 100 * Math.cos(2 * i * Math.PI / N),
-        y: 100 * Math.sin(2 * i * Math.PI / N),
+        x: 10 * Math.cos(2 * i * Math.PI / N),
+        y: 10 * Math.sin(2 * i * Math.PI / N),
         size: 30 * (i + 1),
         color: '#66' + ((i + 1) * 3)
       });
@@ -66,14 +66,32 @@ let SigmaJSHelper = {
         type: 'canvas',
       },
       settings: {
-        minArrowSize: 10
+        minArrowSize: 10,
+        minNodeSize: 8,
+        maxNodeSize: 20,
+        maxEdgeSize: 10,
+        doubleClickEnabled: false,
+        defaultLabelAlignment: 'center',
       }
     });
     
     // Start the ForceAtlas2 algorithm:
-    setTimeout(() => {
-      s.startForceAtlas2({worker: true, barnesHutOptimize: false});
-    }, 3000)
+    //setTimeout(() => {
+      s.startForceAtlas2({
+        worker: true, 
+        //adjustSizes: true,
+        barnesHutOptimize: false,
+        slowDown: 0.5,
+        strongGravityMode: true,
+        edgeWeightInfluence: 1,
+        //scalingRatio: 2,
+        outboundAttractionDistribution: true,
+        linLogMode: true,
+      });
+      setTimeout(() => {
+        s.stopForceAtlas2()
+      }, 1000 * Math.sqrt(N))
+    //}, 3000)
     //s.startForceAtlas2({worker: true, barnesHutOptimize: false});
   },
   draw: function (data, container) {

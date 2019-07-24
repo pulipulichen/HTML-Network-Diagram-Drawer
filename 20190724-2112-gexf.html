@@ -1,24 +1,14 @@
 <!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
 <html>
   <head>
-    <title>
-      Network Diagram Drawer
-    </title>
+    <title>TODO supply a title</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Vendors -->
-    <script src="vendors/jquery/jquery.3.3.1.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="vendors/semantic-ui/semantic.min.css">
-    <script src="vendors/semantic-ui/semantic.min.js"></script>
-    
-    <script src="vendors/vue/vue.js"></script>
-    
-    <script src="vendors/js-xlsx/shim.min.js"></script>
-    <script src="vendors/js-xlsx/xlsx.full.min.js"></script>
-    <script src="vendors/js-xlsx/Blob.js"></script>
-    <script src="vendors/js-xlsx/FileSaver.js"></script>
-    <script src="vendors/js-xlsx/xlsx-helper.js"></script>
 
 <!-- START SIGMA IMPORTS -->
 <script src="vendors/sigma.js/src/sigma.core.js"></script>
@@ -81,28 +71,12 @@
 <script src="vendors/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js"></script>
 <script src="vendors/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
 
+<script src="vendors/sigma.js/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
 
-    <!-- Helpers -->
-    <script src="helpers/DownloadHelper.js"></script>
-    <script src="helpers/UploadHelper.js"></script>
-    <script src="helpers/DateHelper.js"></script>
-    <script src="helpers/VueHelper.js"></script>
-    <script src="helpers/ClipboardHelper.js"></script>
-    <script src="helpers/SigmaJSHelper.js"></script>
-    
-    <link rel="stylesheet/less" type="text/css" href="helpers/FileHelper.less" />
-    <script src="helpers/FileHelper.js"></script>
-    
-    <!-- Style --->
-    
-    <link rel="stylesheet/less" type="text/css" href="styles.less" />
-    <script>
-      less = {
-        logLevel: 0,
-      }
-    </script>
-    <script src="vendors/less/less.min.js" ></script>
-    
+<script src="vendors/sigma.js/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+  </head>
+  <body>
   <style>
     #graph-container {
       top: 0;
@@ -111,103 +85,87 @@
       right: 0;
       position: absolute;
     }
-    #container {
-      max-width: 400px;
-      height: 400px;
-      max-width: 400px;
-      overflow: hidden;
-      margin: auto;
-    }
   </style>
-    <link rel="icon" type="image/svg" href="icon.svg" />
-  </head>
-  <body>
-    <div id="app"
-         ref="modal">
-      <form class="ui form">
-        <div class="ui grid">
-          <div class="six wide column">
-            <div class="two fields">
-              <div class="field">
-                <label>&nbsp;</label>
-                <input type="file" 
-                       accept=".txt,.dat"
-                       v-on:change="upload" />
-                <button type="button"
-                        class="ui labeled icon fluid green button" 
-                        v-on:click="triggerUpload">
-                  <i class="upload icon"></i>
-                  UPLOAD
-                </button>
-              </div>
-              <div class="field">
-                <label>&nbsp;</label>
-                <button type="button"
-                        class="ui labeled icon fluid button" 
-                        v-on:click="reset">
-                  <i class="window close icon"></i>
-                  CLEAN
-                </button>
-              </div>
-            </div>
-              
-            <div class="field"> 
-              <textarea class="input" 
-                        v-model="input" 
-                        onfocus="this.select()"></textarea>
-            </div>
-          </div>
-          <div class="ten wide column">
-            
-            <div class="three fields">
-              <div class="eight wide field">
-                <label>&nbsp;</label>
-                <select name="fileType" 
-                        v-model="fileType" 
-                        v-on:change="persist">
-                  <option value="ods">OpenDocument Spreadsheet (.ods)</option>
-                  <option value="csv">Comma-Separated Values (.csv)</option>
-                  <option value="html">HTML (.html)</option>
-                  <!-- <option value="txt">Plain Text (.txt)</option> -->
-                </select>
-              </div>
-              <div class="four wide field">
-                <label>&nbsp;</label>
-                <button type="button"
-                        class="ui labeled icon fluid green button" 
-                        v-on:click="download">
-                  <i class="download icon"></i>
-                  DOWNLOAD
-                </button>
-              </div>
-              <div class="four wide field">
-                <label>&nbsp;</label>
-                <button type="button"
-                        class="ui labeled icon fluid green button" 
-                        v-on:click="copy">
-                  <i class="copy icon"></i>
-                  COPY
-                </button>
-              </div>
-            </div>
-            <div class="field">
-              <label>
-                Filename
-              </label>
-              <input type="text" v-model="outputTitle" disabled="disabled" />
-            </div>
-            
-            <div v-html="output" class="output"></div>
-           
-            <div id="container">
-              <div id="graph-container"></div>
-            </div>
-          </div>
-        </div>
-        
-        
-      </form>
-    </div>
-    <script src="scripts.js"></script>
+    
+    <div id="container">
+  <div id="graph-container"></div>
+</div>
+<script src="helpers/SigmaJSHelper.js"></script> 
+<script>
+//SigmaJSHelper.demo()
+
+let ss = new sigma({
+      //graph: g,
+      graph: {
+              nodes: [],
+              edges: [],
+              //minArrowSize: 300
+      },
+      renderer: {
+        container: document.getElementById('graph-container'),
+        type: 'canvas',
+      },
+      settings: {
+        //minArrowSize: 10,
+        minNodeSize: 8,
+        //maxNodeSize: 20,
+        //maxEdgeSize: 10,
+        doubleClickEnabled: false,
+        //defaultLabelAlignment: 'center',
+      }
+    });
+
+sigma.parsers.gexf(
+  'data/standard_graph.gexf',
+  ss,
+  //{ container: 'graph-container' },
+  function (s) {
+    //console.log(s.settings)
+    /*
+    s.settings({
+        minArrowSize: 10,
+        minNodeSize: 8,
+        maxNodeSize: 20,
+        maxEdgeSize: 10,
+        doubleClickEnabled: false,
+        defaultLabelAlignment: 'center',
+      })
+    */
+    //s.settings('doubleClickEnabled:', false)
+    console.log('ok?')
+    ss.refresh();
+    ss.startForceAtlas2({
+        worker: true, 
+        //adjustSizes: true,
+        barnesHutOptimize: false,
+        slowDown: 1,
+        strongGravityMode: true,
+        edgeWeightInfluence: 1,
+        //scalingRatio: 2,
+        outboundAttractionDistribution: true,
+        linLogMode: true,
+      });
+      setTimeout(() => {
+        ss.stopForceAtlas2()
+        console.log('stopForceAtlas2')
+        var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
+        /*
+        dragListener.bind('startdrag', function(event) {
+  console.log(event);
+});
+dragListener.bind('drag', function(event) {
+  console.log(event);
+});
+dragListener.bind('drop', function(event) {
+  console.log(event);
+});
+dragListener.bind('dragend', function(event) {
+  console.log(event);
+});
+*/
+      }, 3000)
+  }
+);
+</script>
   </body>
 </html>
