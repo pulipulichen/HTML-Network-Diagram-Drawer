@@ -100,6 +100,7 @@ and open the template in the editor.
 <script src="helpers/SigmaJSHelper.js"></script> 
 <script>
 //SigmaJSHelper.demo()
+let labelWidth = {}
 sigma.canvas.nodes.def = function(node, context, settings) {
   var prefix = settings('prefix') || '',
       size = node[prefix + 'size']
@@ -113,30 +114,35 @@ sigma.canvas.nodes.def = function(node, context, settings) {
   //  settings('defaultLabelSize') :
   //  settings('labelSizeRatio') * size;
 
-  if (settings('labelSize') === 'fixed') {
+  //if (settings('labelSize') === 'fixed') {
     //let x = Math.round(node[prefix + 'x'] - settings('labelSizeRatio') * (context.measureText(node.label).width / 2) - borderSize )
     //let y = node[prefix + 'y'] - size
-    let width = (settings('labelSizeRatio') * (context.measureText(node.label).width))
+    if (typeof(labelWidth[node.label]) === 'undefined') {
+      labelWidth[node.label] = context.measureText(node.label).width
+    }
+    let width = (settings('labelSizeRatio') * (labelWidth[node.label]))
     width = width * Math.sqrt(Math.sqrt(size))
     let x = Math.round(node[prefix + 'x'] - (width / 2) )
 
     //width = width / Math.sqrt(s.cameras[0].ratio * settings('zoomingRatio'))
     //width = width * settings('labelSizeRatio')
     //let width = context.measureText(node.label).width * settings('labelSizeRatio') / s.cameras[0].ratio / 2 
-    if (node.label === 'n1') {
+    
+    if (node.label === 'Node 1') {
       //console.log([width, settings('labelSizeRatio'), settings('zoomingRatio')])
       //console.log(window.devicePixelRatio)
-      console.log([size, s.cameras[0].ratio], width)
+      //console.log([size, width, settings('labelSizeRatio'), context.measureText(node.label).width])
     }
     //let height = size * 2
     let height = settings('labelSizeRatio')
-    height = width / node.label.length * 1.5
+    height = width / node.label.length * 2
     let y = Math.round(node[prefix + 'y'] - (height/2))
 
-    let radius = size
+    let radius = height / 2
     let fill = true
     let stroke = false
 
+    /*
     context.fillStyle = node.color || settings('defaultNodeColor');
 
     context.beginPath();
@@ -154,8 +160,9 @@ sigma.canvas.nodes.def = function(node, context, settings) {
 
     context.closePath();
     context.fill();
-  }
-  // roundRect(context, x, y, width, height, radius, fill, stroke)
+    */
+  //}
+  roundRect(context, x, y, width, height, radius, fill, stroke)
 };
 
 
@@ -257,12 +264,420 @@ sigma.canvas.labels.def = function(node, context, settings) {
 };
 sigma.canvas.hovers.def = function () {}
 
+sigma.canvas.edges.arrow = function(edge, source, target, context, settings) {
+    if (typeof(labelWidth[target.label]) === 'undefined') {
+      labelWidth[target.label] = context.measureText(target.label).width
+    }
+  
+    var color = edge.color,
+        prefix = settings('prefix') || '',
+        edgeColor = settings('edgeColor'),
+        defaultNodeColor = settings('defaultNodeColor'),
+        defaultEdgeColor = settings('defaultEdgeColor'),
+        size = edge[prefix + 'size'] || 1,
+        tSize = target[prefix + 'size'] + (Math.sqrt(labelWidth[target.label]) / size / size),
+        sX = source[prefix + 'x'],
+        sY = source[prefix + 'y'],
+        tX = target[prefix + 'x'],
+        tY = target[prefix + 'y'],
+        aSize = Math.max(size * 2.5, settings('minArrowSize')),
+        d = Math.sqrt(Math.pow(tX - sX, 2) + Math.pow(tY - sY, 2)),
+        aX = sX + (tX - sX) * (d - aSize - tSize) / d,
+        aY = sY + (tY - sY) * (d - aSize - tSize) / d,
+        vX = (tX - sX) * aSize / d,
+        vY = (tY - sY) * aSize / d;
+    
+    //vX = vX - (context.measureText(target.label).width / 2)
+    
+    if (!color)
+      switch (edgeColor) {
+        case 'source':
+          color = source.color || defaultNodeColor;
+          break;
+        case 'target':
+          color = target.color || defaultNodeColor;
+          break;
+        default:
+          color = defaultEdgeColor;
+          break;
+      }
+
+    if ((Math.abs(sY - tY) / Math.abs(sX - tX)) < 1) {
+      if (sX > tX) {
+        aX  = aX + (labelWidth[target.label] / 2)
+      }
+      else if (sX < tX) {
+        aX  = aX - (labelWidth[target.label] / 2)
+      }
+    }
+
+    context.strokeStyle = color;
+    context.lineWidth = size;
+    context.beginPath();
+    context.moveTo(sX, sY);
+    context.lineTo(
+      aX,
+      aY
+    );
+    context.stroke();
+
+    context.fillStyle = color;
+    context.beginPath();
+    context.moveTo(aX + vX, aY + vY);
+    context.lineTo(aX + vY * 0.6, aY - vX * 0.6);
+    context.lineTo(aX - vY * 0.6, aY + vX * 0.6);
+    context.lineTo(aX + vX, aY + vY);
+    context.closePath();
+    context.fill();
+  };
+
+sigma.canvas.edges.curvedArrow =
+    function(edge, source, target, context, settings) {
+      if (typeof(labelWidth[target.label]) === 'undefined') {
+        labelWidth[target.label] = context.measureText(target.label).width
+      }
+      
+    var color = edge.color,
+        prefix = settings('prefix') || '',
+        edgeColor = settings('edgeColor'),
+        defaultNodeColor = settings('defaultNodeColor'),
+        defaultEdgeColor = settings('defaultEdgeColor'),
+        cp = {},
+        size = edge[prefix + 'size'] || 1,
+        tSize = target[prefix + 'size'],
+        sX = source[prefix + 'x'],
+        sY = source[prefix + 'y'],
+        tX = target[prefix + 'x'],
+        tY = target[prefix + 'y'],
+        aSize = Math.max(size * 2.5, settings('minArrowSize')),
+        d,
+        aX,
+        aY,
+        vX,
+        vY;
+
+    cp = (source.id === target.id) ?
+      sigma.utils.getSelfLoopControlPoints(sX, sY, tSize) :
+      sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY);
+
+    if (source.id === target.id) {
+      d = Math.sqrt(Math.pow(tX - cp.x1, 2) + Math.pow(tY - cp.y1, 2));
+      aX = cp.x1 + (tX - cp.x1) * (d - aSize - tSize) / d;
+      aX = aX - (labelWidth[target.label] / 2)
+      aY = cp.y1 + (tY - cp.y1) * (d - aSize - tSize) / d;
+      vX = (tX - cp.x1) * aSize / d;
+      vY = (tY - cp.y1) * aSize / d;
+    }
+    else {
+      d = Math.sqrt(Math.pow(tX - cp.x, 2) + Math.pow(tY - cp.y, 2));
+      aX = cp.x + (tX - cp.x) * (d - aSize - tSize) / d;
+      //if ( (sX > tX) ) {
+      if ((Math.abs(sY - tY) / Math.abs(sX - tX)) < 1) {
+        if (sX < tX) {
+          aX = aX - (labelWidth[target.label] / 2);
+        }
+        else {
+          aX = aX + (labelWidth[target.label] / 2);
+        }
+      }
+      //}
+      //else if ((sX < tX)) {
+        //aX = aX - (labelWidth[target.label] / 2);
+      //}
+      
+      //if (edge.label === 'Edge 10') {
+      //  //console.log(aX)
+      //  aX = cp.x + (tX - cp.x) * (d - aSize - tSize) / d + (labelWidth[target.label] / 2);
+      //}
+      
+      aY = cp.y + (tY - cp.y) * (d - aSize - tSize) / d;
+      vX = (tX - cp.x) * aSize / d;
+      vY = (tY - cp.y) * aSize / d;
+    }
+
+    if (!color)
+      switch (edgeColor) {
+        case 'source':
+          color = source.color || defaultNodeColor;
+          break;
+        case 'target':
+          color = target.color || defaultNodeColor;
+          break;
+        default:
+          color = defaultEdgeColor;
+          break;
+      }
+
+    context.strokeStyle = color;
+    context.lineWidth = size;
+    context.beginPath();
+    context.moveTo(sX, sY);
+    if (source.id === target.id) {
+      context.bezierCurveTo(cp.x2, cp.y2, cp.x1, cp.y1, aX, aY);
+    } else {
+      context.quadraticCurveTo(cp.x, cp.y, aX, aY);
+    }
+    context.stroke();
+
+    context.fillStyle = color;
+    context.beginPath();
+    context.moveTo(aX + vX, aY + vY);
+    context.lineTo(aX + vY * 0.6, aY - vX * 0.6);
+    context.lineTo(aX - vY * 0.6, aY + vX * 0.6);
+    context.lineTo(aX + vX, aY + vY);
+    context.closePath();
+    context.fill();
+  };
+  
+  
+sigma.canvas.edges.labels.curvedArrow =
+    function(edge, source, target, context, settings) {
+    if (typeof edge.label !== 'string')
+      return;
+
+      if (typeof(labelWidth[target.label]) === 'undefined') {
+        labelWidth[target.label] = context.measureText(target.label).width
+      }
+
+    var prefix = settings('prefix') || '',
+        size = edge[prefix + 'size'] || 1;
+
+    if (size < settings('edgeLabelThreshold'))
+      return;
+
+    var fontSize,
+        sSize = source[prefix + 'size'],
+        sX = source[prefix + 'x'],
+        sY = source[prefix + 'y'],
+        tX = target[prefix + 'x'],
+        tY = target[prefix + 'y'],
+        count = edge.count || 0,
+        dX = tX - sX,
+        dY = tY - sY,
+        sign = (sX < tX) ? 1 : -1,
+        cp = {},
+        c,
+        angle,
+        t = 0.5;  //length of the curve
+    
+    if (source.id === target.id) {
+      //console.log(sSize)
+      
+      tX = tX - (labelWidth[target.label] * Math.sqrt(sSize))
+      tY = tY + (labelWidth[target.label] / 2 * Math.sqrt(sSize))
+      
+      //tX = tX + (labelWidth[target.label] * Math.sqrt(sSize)) - labelWidth[target.label]
+      //tY = tY - (labelWidth[target.label] * Math.sqrt(sSize))
+      
+      cp = sigma.utils.getSelfLoopControlPoints(sX, sY, sSize, count);
+      c = sigma.utils.getPointOnBezierCurve(
+        t, sX, sY, tX, tY, cp.x1, cp.y1, cp.x2, cp.y2
+      );
+      angle = Math.atan2(1, 1); // 45°
+    } else {
+      console.log(Math.abs(sY - tY) / Math.abs(sX - tX))
+      if ((Math.abs(sY - tY) / Math.abs(sX - tX) > 1) && (Math.abs(sY - tY) / Math.abs(sX - tX) < 3)) {
+        let width = labelWidth[target.label] / 2
+        width = width * sign
+        if (sX > tX) { 
+          tX = tX + width
+          //tY = tY - labelWidth[target.label] / 2
+        } 
+        else if (sX < tX) { 
+          tX = tX - width
+          //tY = tY - labelWidth[target.label] / 2
+        }
+        if (edge.label === 'Edge 10') {
+          //console.log(sign)
+        }
+      }
+      cp = sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY, count);
+      //cp.x = cp.x - (labelWidth[target.label] * Math.sqrt(sSize))
+      c = sigma.utils.getPointOnQuadraticCurve(t, sX, sY, tX, tY, cp.x, cp.y);
+      angle = Math.atan2(dY * sign, dX * sign);
+    }
+
+    // The font size is sublineraly proportional to the edge size, in order to
+    // avoid very large labels on screen.
+    // This is achieved by f(x) = x * x^(-1/ a), where 'x' is the size and 'a'
+    // is the edgeLabelSizePowRatio. Notice that f(1) = 1.
+    // The final form is:
+    // f'(x) = b * x * x^(-1 / a), thus f'(1) = b. Application:
+    // fontSize = defaultEdgeLabelSize if edgeLabelSizePowRatio = 1
+    fontSize = (settings('edgeLabelSize') === 'fixed') ?
+      settings('defaultEdgeLabelSize') :
+      settings('defaultEdgeLabelSize') *
+      size *
+      Math.pow(size, -1 / settings('edgeLabelSizePowRatio'));
+
+    context.save();
+
+    
+    if (edge.active) {
+      context.font = [
+        settings('activeFontStyle'),
+        fontSize + 'px',
+        settings('activeFont') || settings('font')
+      ].join(' ');
+
+      context.fillStyle =
+        settings('edgeActiveColor') === 'edge' ?
+        (edge.active_color || settings('defaultEdgeActiveColor')) :
+        settings('defaultEdgeLabelActiveColor');
+    }
+    else {
+      context.font = [
+        settings('fontStyle'),
+        fontSize + 'px',
+        settings('font')
+      ].join(' ');
+
+      context.fillStyle =
+        (settings('edgeLabelColor') === 'edge') ?
+        (edge.color || settings('defaultEdgeColor')) :
+        settings('defaultEdgeLabelColor');
+    }
+
+    context.textAlign = 'center';
+    context.textBaseline = 'alphabetic';
+
+    context.translate(c.x, c.y);
+    context.rotate(angle);
+    context.fillText(
+      edge.label,
+      0,
+      (-size / 2) - 3
+    );
+
+    context.restore();
+  };
+  
+  
+sigma.canvas.edges.labels.def =
+    function(edge, source, target, context, settings) {
+    if (typeof edge.label !== 'string' || source == target)
+      return;
+
+    var prefix = settings('prefix') || '',
+        size = edge[prefix + 'size'] || 1;
+
+    //if (size < settings('edgeLabelThreshold'))
+    //  return;
+    if (typeof(labelWidth[target.label]) === 'undefined') {
+      labelWidth[target.label] = context.measureText(target.label).width
+    }
+
+    if (0 === settings('edgeLabelSizePowRatio'))
+      throw '"edgeLabelSizePowRatio" must not be 0.';
+
+    let sX = source[prefix + 'x']
+    let sY = source[prefix + 'y']
+    let tX = target[prefix + 'x']
+    let tY = target[prefix + 'y']
+    
+    /*
+    if (sX > tX) {
+      tX = tX + (labelWidth[target.label] / 2)
+    }
+    else if (sX < tX) {
+      tX = tX - (labelWidth[target.label] / 2)
+    }
+    */
+
+    var fontSize,
+        dX = target[prefix + 'x'] - source[prefix + 'x'],
+        dY = target[prefix + 'y'] - source[prefix + 'y'],
+        sign = (source[prefix + 'x'] < target[prefix + 'Y']) ? 1 : -1,
+        angle = Math.atan2(dY * sign, dX * sign);
+
+    let limit = 3.2
+    let turn = false
+    if (angle > 2) {
+      angle = angle - limit
+      turn = true
+    }
+    else if (angle < -2) {
+      angle = angle + limit
+      turn = true
+    }
+    
+    if (Math.abs(sY - tY) / Math.abs(sX - tX) < 1) {
+      if (turn === false) {
+        tX = tX + (labelWidth[target.label] / 2)
+      }
+      else {
+        tX = tX - (labelWidth[target.label] / 2)
+      }
+    }
+    
+    let x = (sX + tX) / 2,
+        y = (sY + tY) / 2
+    
+    
+    if (edge.label === 'Edge 4') {
+      //console.log(angle)
+    }
+
+    // The font size is sublineraly proportional to the edge size, in order to
+    // avoid very large labels on screen.
+    // This is achieved by f(x) = x * x^(-1/ a), where 'x' is the size and 'a'
+    // is the edgeLabelSizePowRatio. Notice that f(1) = 1.
+    // The final form is:
+    // f'(x) = b * x * x^(-1 / a), thus f'(1) = b. Application:
+    // fontSize = defaultEdgeLabelSize if edgeLabelSizePowRatio = 1
+    fontSize = (settings('edgeLabelSize') === 'fixed') ?
+      settings('defaultEdgeLabelSize') :
+      settings('defaultEdgeLabelSize') *
+      size *
+      Math.pow(size, -1 / settings('edgeLabelSizePowRatio'));
+
+    context.save();
+
+    if (edge.active) {
+      context.font = [
+        settings('activeFontStyle'),
+        fontSize + 'px',
+        settings('activeFont') || settings('font')
+      ].join(' ');
+
+      context.fillStyle =
+        settings('edgeActiveColor') === 'edge' ?
+        (edge.active_color || settings('defaultEdgeActiveColor')) :
+        settings('defaultEdgeLabelActiveColor');
+    }
+    else {
+      context.font = [
+        settings('fontStyle'),
+        fontSize + 'px',
+        settings('font')
+      ].join(' ');
+
+      context.fillStyle =
+        (settings('edgeLabelColor') === 'edge') ?
+        (edge.color || settings('defaultEdgeColor')) :
+        settings('defaultEdgeLabelColor');
+    }
+
+    context.textAlign = 'center';
+    context.textBaseline = 'alphabetic';
+
+    context.translate(x, y);
+    context.rotate(angle);
+    context.fillText(
+      edge.label,
+      0,
+      (-size / 2) - 3
+    );
+
+    context.restore();
+  };
+
 // --------------------------------------
 
 let g = {
         nodes: [],
         edges: [],
-        minArrowSize: 300
+        //minArrowSize: 20
 }
 let n = 10
 
@@ -282,10 +697,17 @@ for (let i = 0; i < n; i++) {
 }
 
 let edgesList = []
+let sameEdgeList = []
 for (let i = 0; i < n*1.5; i++) {
   let source = 'n' + parseInt(Math.random() * n)
   let target = 'n' + parseInt(Math.random() * n)
+  
+  if (sameEdgeList.indexOf([source, target].join('-')) > -1) {
+    continue;
+  }
+  sameEdgeList.push([source, target].join('-'))
   let type = 'arrow'
+  let count = 1
   if (source === target) {
     type = 'curvedArrow'
   }
@@ -296,16 +718,19 @@ for (let i = 0; i < n*1.5; i++) {
     }
     else {
       type = 'curvedArrow'
-      console.log(i, edgesList[key])
-      if (edgesList[key].length > 0) {
+      //console.log(i, edgesList[key])
+      //if (edgesList[key].length > 0) {
         edgesList[key].forEach(e => {
           //e.type = 'curvedArrow'
           g.edges[e].type = 'curvedArrow'
         })
         edgesList[key] = []
-      }
+        count = edgesList[key].length
+      //}
     }
   }
+  
+  
   
   g.edges.push({
     id: 'e' + i,
@@ -316,12 +741,16 @@ for (let i = 0; i < n*1.5; i++) {
     color: '#ccc',
     //type: 'curvedArrow',
     type: type,
-    count: i,
-    minArrowSize: 300
+    count: count,
+    //minArrowSize: 200
   });
 }
-console.log(edgesList)
-
+//console.log(edgesList)
+console.log(JSON.stringify(g))
+//g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n9","target":"n3","size":30,"color":"#ccc","type":"arrow","count":0},{"id":"e1","label":"Edge 1","source":"n8","target":"n1","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e2","label":"Edge 2","source":"n6","target":"n6","size":30,"color":"#ccc","type":"curvedArrow","count":2},{"id":"e3","label":"Edge 3","source":"n9","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":3},{"id":"e4","label":"Edge 4","source":"n5","target":"n4","size":30,"color":"#ccc","type":"arrow","count":4},{"id":"e5","label":"Edge 5","source":"n3","target":"n1","size":30,"color":"#ccc","type":"arrow","count":5},{"id":"e6","label":"Edge 6","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":6},{"id":"e7","label":"Edge 7","source":"n5","target":"n9","size":30,"color":"#ccc","type":"arrow","count":7},{"id":"e8","label":"Edge 8","source":"n6","target":"n6","size":30,"color":"#ccc","type":"curvedArrow","count":8},{"id":"e9","label":"Edge 9","source":"n9","target":"n7","size":30,"color":"#ccc","type":"arrow","count":9},{"id":"e10","label":"Edge 10","source":"n1","target":"n8","size":30,"color":"#ccc","type":"curvedArrow","count":10},{"id":"e11","label":"Edge 11","source":"n5","target":"n3","size":30,"color":"#ccc","type":"arrow","count":11},{"id":"e12","label":"Edge 12","source":"n6","target":"n7","size":30,"color":"#ccc","type":"arrow","count":12},{"id":"e13","label":"Edge 13","source":"n4","target":"n0","size":30,"color":"#ccc","type":"arrow","count":13},{"id":"e14","label":"Edge 14","source":"n0","target":"n3","size":30,"color":"#ccc","type":"arrow","count":14}]}
+//g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n8","target":"n0","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e1","label":"Edge 1","source":"n6","target":"n9","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e2","label":"Edge 2","source":"n1","target":"n3","size":30,"color":"#ccc","type":"curvedArrow","count":2},{"id":"e3","label":"Edge 3","source":"n1","target":"n3","size":30,"color":"#ccc","type":"curvedArrow","count":3},{"id":"e4","label":"Edge 4","source":"n5","target":"n5","size":30,"color":"#ccc","type":"curvedArrow","count":4},{"id":"e5","label":"Edge 5","source":"n3","target":"n2","size":30,"color":"#ccc","type":"arrow","count":5},{"id":"e6","label":"Edge 6","source":"n2","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":6},{"id":"e7","label":"Edge 7","source":"n7","target":"n4","size":30,"color":"#ccc","type":"arrow","count":7},{"id":"e8","label":"Edge 8","source":"n3","target":"n6","size":30,"color":"#ccc","type":"arrow","count":8},{"id":"e9","label":"Edge 9","source":"n9","target":"n3","size":30,"color":"#ccc","type":"arrow","count":9},{"id":"e10","label":"Edge 10","source":"n6","target":"n0","size":30,"color":"#ccc","type":"arrow","count":10},{"id":"e11","label":"Edge 11","source":"n3","target":"n8","size":30,"color":"#ccc","type":"arrow","count":11},{"id":"e12","label":"Edge 12","source":"n7","target":"n2","size":30,"color":"#ccc","type":"curvedArrow","count":12},{"id":"e13","label":"Edge 13","source":"n0","target":"n8","size":30,"color":"#ccc","type":"curvedArrow","count":13},{"id":"e14","label":"Edge 14","source":"n4","target":"n4","size":30,"color":"#ccc","type":"curvedArrow","count":14}]}
+//g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n0","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e1","label":"Edge 1","source":"n2","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e2","label":"Edge 2","source":"n5","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e3","label":"Edge 3","source":"n2","target":"n9","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e4","label":"Edge 4","source":"n2","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e5","label":"Edge 5","source":"n8","target":"n7","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e6","label":"Edge 6","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e7","label":"Edge 7","source":"n7","target":"n4","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e8","label":"Edge 8","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e9","label":"Edge 9","source":"n0","target":"n0","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e10","label":"Edge 10","source":"n3","target":"n7","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e11","label":"Edge 11","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e12","label":"Edge 12","source":"n5","target":"n7","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e13","label":"Edge 13","source":"n3","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e14","label":"Edge 14","source":"n2","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1}]}
+g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n7","target":"n1","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e1","label":"Edge 1","source":"n6","target":"n1","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e2","label":"Edge 2","source":"n8","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e3","label":"Edge 3","source":"n5","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e4","label":"Edge 4","source":"n7","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e5","label":"Edge 5","source":"n9","target":"n5","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e7","label":"Edge 7","source":"n3","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e8","label":"Edge 8","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e9","label":"Edge 9","source":"n5","target":"n2","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e10","label":"Edge 10","source":"n9","target":"n2","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e11","label":"Edge 11","source":"n9","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e12","label":"Edge 12","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e14","label":"Edge 14","source":"n8","target":"n0","size":30,"color":"#ccc","type":"arrow","count":1}]}
 
 let ss = new sigma({
       graph: g,
@@ -330,7 +759,7 @@ let ss = new sigma({
         type: 'canvas',
       },
       settings: {
-        minArrowSize: 20,
+        minArrowSize: 10,
         minNodeSize: 20,
         maxNodeSize: 20,
         //minEdgeSize: 2,
@@ -338,6 +767,7 @@ let ss = new sigma({
         //labelSize: "proportional",
         doubleClickEnabled: false,
         //defaultLabelAlignment: 'center',
+        sideMargin: 100,
       }
     });
 
