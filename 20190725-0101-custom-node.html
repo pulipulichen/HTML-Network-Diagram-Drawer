@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+  <head>
+    <title>custom-node</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- START SIGMA IMPORTS -->
+<script src="vendors/sigma.js/src/sigma.core.js"></script>
+<script src="vendors/sigma.js/src/conrad.js"></script>
+<script src="vendors/sigma.js/src/utils/sigma.utils.js"></script>
+<script src="vendors/sigma.js/src/utils/sigma.polyfills.js"></script>
+<script src="vendors/sigma.js/src/sigma.settings.js"></script>
+<script src="vendors/sigma.js/src/classes/sigma.classes.dispatcher.js"></script>
+<script src="vendors/sigma.js/src/classes/sigma.classes.configurable.js"></script>
+<script src="vendors/sigma.js/src/classes/sigma.classes.graph.js"></script>
+<script src="vendors/sigma.js/src/classes/sigma.classes.camera.js"></script>
+<script src="vendors/sigma.js/src/classes/sigma.classes.quad.js"></script>
+<script src="vendors/sigma.js/src/classes/sigma.classes.edgequad.js"></script>
+<script src="vendors/sigma.js/src/captors/sigma.captors.mouse.js"></script>
+<script src="vendors/sigma.js/src/captors/sigma.captors.touch.js"></script>
+<script src="vendors/sigma.js/src/renderers/sigma.renderers.canvas.js"></script>
+<script src="vendors/sigma.js/src/renderers/sigma.renderers.webgl.js"></script>
+<script src="vendors/sigma.js/src/renderers/sigma.renderers.svg.js"></script>
+<script src="vendors/sigma.js/src/renderers/sigma.renderers.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="vendors/sigma.js/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="vendors/sigma.js/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="vendors/sigma.js/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="vendors/sigma.js/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="vendors/sigma.js/src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="vendors/sigma.js/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="vendors/sigma.js/src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="vendors/sigma.js/src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="vendors/sigma.js/src/misc/sigma.misc.animation.js"></script>
+<script src="vendors/sigma.js/src/misc/sigma.misc.bindEvents.js"></script>
+<script src="vendors/sigma.js/src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="vendors/sigma.js/src/misc/sigma.misc.drawHovers.js"></script>
+<!-- END SIGMA IMPORTS -->
+<script src="vendors/sigma.js/plugins/sigma.renderers.parallelEdges/utils.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.curve.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.parallelEdges/sigma.canvas.edgehovers.curve.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.parallelEdges/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.edgeLabels/settings.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.def.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.curve.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.curvedArrow.js"></script>
+
+<script src="vendors/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
+
+<script src="vendors/sigma.js/plugins/sigma.layout.noverlap/sigma.layout.noverlap.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.plugins.animate/sigma.plugins.animate.js"></script>
+
+<script src="vendors/sigma.js/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
+<script src="vendors/sigma.js/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
+
+<script src="vendors/sigma.js/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+
+<script src="vendors/sigma.js/plugins/sigma.layout.noverlap/sigma.layout.noverlap.js"></script>
+
+  </head>
+  <body>
+  <style>
+    #graph-container {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+    }
+  </style>
+    
+    <div id="container">
+  <div id="graph-container"></div>
+</div>
+<script src="helpers/SigmaJSHelper.js"></script> 
+<script>
+//SigmaJSHelper.demo()
+sigma.canvas.nodes.def = function(node, context, settings) {
+  var prefix = settings('prefix') || '',
+      size = node[prefix + 'size']
+  
+  //let s = ss
+  //let borderSize = context.measureText('|').width * 2
+  //if (settings('labelSize') === 'fixed') {
+  //  borderSize = settings('defaultLabelSize')
+  //}
+  //let fontSize = (settings('labelSize') === 'fixed') ?
+  //  settings('defaultLabelSize') :
+  //  settings('labelSizeRatio') * size;
+
+  if (settings('labelSize') === 'fixed') {
+    //let x = Math.round(node[prefix + 'x'] - settings('labelSizeRatio') * (context.measureText(node.label).width / 2) - borderSize )
+    //let y = node[prefix + 'y'] - size
+    let width = (settings('labelSizeRatio') * (context.measureText(node.label).width))
+    width = width * Math.sqrt(Math.sqrt(size))
+    let x = Math.round(node[prefix + 'x'] - (width / 2) )
+
+    //width = width / Math.sqrt(s.cameras[0].ratio * settings('zoomingRatio'))
+    //width = width * settings('labelSizeRatio')
+    //let width = context.measureText(node.label).width * settings('labelSizeRatio') / s.cameras[0].ratio / 2 
+    if (node.label === 'n1') {
+      //console.log([width, settings('labelSizeRatio'), settings('zoomingRatio')])
+      //console.log(window.devicePixelRatio)
+      console.log([size, s.cameras[0].ratio], width)
+    }
+    //let height = size * 2
+    let height = settings('labelSizeRatio')
+    height = width / node.label.length * 1.5
+    let y = Math.round(node[prefix + 'y'] - (height/2))
+
+    let radius = size
+    let fill = true
+    let stroke = false
+
+    context.fillStyle = node.color || settings('defaultNodeColor');
+
+    context.beginPath();
+    context.rect(
+            x,
+            y,
+            width,
+            height
+      //node[prefix + 'x'] - size,
+      //Math.round(node[prefix + 'x'] - settings('labelSizeRatio') * (context.measureText(node.label).width / 2 + borderSize )),
+      //node[prefix + 'y'] - size,
+      //(settings('labelSizeRatio') * (context.measureText(node.label).width + (borderSize * 2) )),
+      //size * 2
+    );
+
+    context.closePath();
+    context.fill();
+  }
+  // roundRect(context, x, y, width, height, radius, fill, stroke)
+};
+
+
+/**
+ * Draws a rounded rectangle using the current state of the canvas.
+ * If you omit the last three params, it will draw a rectangle
+ * outline with a 5 pixel border radius
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Number} x The top left x coordinate
+ * @param {Number} y The top left y coordinate
+ * @param {Number} width The width of the rectangle
+ * @param {Number} height The height of the rectangle
+ * @param {Number} [radius = 5] The corner radius; It can also be an object 
+ *                 to specify different radii for corners
+ * @param {Number} [radius.tl = 0] Top left
+ * @param {Number} [radius.tr = 0] Top right
+ * @param {Number} [radius.br = 0] Bottom right
+ * @param {Number} [radius.bl = 0] Bottom left
+ * @param {Boolean} [fill = false] Whether to fill the rectangle.
+ * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
+ */
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+  if (typeof stroke == 'undefined') {
+    stroke = true;
+  }
+  if (typeof radius === 'undefined') {
+    radius = 5;
+  }
+  if (typeof radius === 'number') {
+    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+  } else {
+    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+    for (var side in defaultRadius) {
+      radius[side] = radius[side] || defaultRadius[side];
+    }
+  }
+  ctx.beginPath();
+  ctx.moveTo(x + radius.tl, y);
+  ctx.lineTo(x + width - radius.tr, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+  ctx.lineTo(x + width, y + height - radius.br);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+  ctx.lineTo(x + radius.bl, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+  ctx.lineTo(x, y + radius.tl);
+  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+  ctx.closePath();
+  if (fill) {
+    ctx.fill();
+  }
+  if (stroke) {
+    ctx.stroke();
+  }
+
+}
+
+sigma.canvas.labels.def = function(node, context, settings) {
+  var fontSize,
+      prefix = settings('prefix') || '',
+      size = node[prefix + 'size'];
+
+  if (size < settings('labelThreshold'))
+    return;
+
+  if (!node.label || typeof node.label !== 'string')
+    return;
+
+  fontSize = (settings('labelSize') === 'fixed') ?
+    settings('defaultLabelSize') :
+    settings('labelSizeRatio') * size;
+
+  context.font = (settings('fontStyle') ? settings('fontStyle') + ' ' : '') +
+    fontSize + 'px ' + settings('font');
+  context.fillStyle = (settings('labelColor') === 'node') ?
+    (node.color || settings('defaultNodeColor')) :
+    settings('defaultLabelColor');
+  /*
+  if (node.label === 'n11') {
+    console.log([
+      settings('labelSizeRatio'),
+      fontSize,
+      node.label.length,
+      context.measureText(node.label).width
+    ])
+  }
+  */
+  let label = node.label
+  let x = Math.round(node[prefix + 'x'] 
+          - ( settings('labelSizeRatio') * (context.measureText(node.label).width / 2)) )
+  let y = Math.round(node[prefix + 'y'] + fontSize / 3)
+ 
+  context.fillText(
+    label,
+    x,
+    y
+  );
+  
+
+};
+sigma.canvas.hovers.def = function () {}
+
+// --------------------------------------
+
+let g = {
+        nodes: [],
+        edges: [],
+        minArrowSize: 300
+}
+let n = 10
+
+for (let i = 0; i < n; i++) {
+  g.nodes.push({
+      id: 'n' + i,
+          label: 'Node ' + i,
+          //x: (0.3 + 0.5 * i),
+          //y: (0.3 + 0.5 * i),
+          //x: Math.cos(2 * i * Math.PI / n),
+          //y: Math.sin(2 * i * Math.PI / n),
+          //size: 30 * (i + 1),
+          size: 30,
+          color: 'yellow'
+          //color: '#66' + ((i + 1) * 3)
+  });
+}
+
+for (let i = 0; i < n*1.5; i++) {
+  g.edges.push({
+    id: 'e' + i,
+    label: 'Edge ' + i,
+    source: 'n' + parseInt(Math.random() * n),
+    target: 'n' + parseInt(Math.random() * n),
+    size: 30,
+    color: '#ccc',
+    //type: 'curvedArrow',
+    count: i,
+    minArrowSize: 300
+  });
+}
+
+
+
+let ss = new sigma({
+      graph: g,
+      renderer: {
+        container: document.getElementById('graph-container'),
+        type: 'canvas',
+      },
+      settings: {
+        minArrowSize: 20,
+        minNodeSize: 20,
+        maxNodeSize: 20,
+        //minEdgeSize: 2,
+        maxEdgeSize: 2,
+        //labelSize: "proportional",
+        doubleClickEnabled: false,
+        //defaultLabelAlignment: 'center',
+      }
+    });
+
+// -----------------------
+/*
+var config = {
+  nodeMargin: 3.0,
+  //scaleNodes: 1.3,
+  maxIterations: 1000,
+  speed: 0.5,
+  //easing: true,
+  //duration: 3000
+};
+//ss.configNoverlap(config);
+
+// Configure the algorithm
+var listener = ss.configNoverlap(config);
+
+// Bind all events:
+listener.bind('stop', function(event) {
+  console.log('stop')
+  sigma.plugins.dragNodes(ss, ss.renderers[0]);
+});
+
+ss.startNoverlap();
+*/
+
+// ------------------------------------------
+
+/*
+ss.startForceAtlas2({
+  worker: true, 
+  adjustSizes: true,
+  barnesHutOptimize: false,
+  slowDown: 0.5,
+  strongGravityMode: true,
+  edgeWeightInfluence: 1,
+  scalingRatio: 2,
+  outboundAttractionDistribution: true,
+  linLogMode: true,
+  autoRescale: true,
+});
+setTimeout(() => {
+  ss.stopForceAtlas2()
+  console.log('stopForceAtlas2')
+  var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
+}, 3000)
+*/
+
+// ------------------------------------------
+var config = {
+  rankdir: 'TB'
+};
+var listener = sigma.layouts.dagre.start(ss, config);
+
+// Bind all events:
+listener.bind('stop', function(event) {
+  console.log(event.type);
+  var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
+});
+
+sigma.layouts.dagre.start(ss);
+
+</script>
+  </body>
+</html>
