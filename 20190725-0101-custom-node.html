@@ -104,7 +104,11 @@ let labelWidth = {}
 sigma.canvas.nodes.def = function(node, context, settings) {
   var prefix = settings('prefix') || '',
       size = node[prefix + 'size']
-  
+      
+  context.fillStyle = '#FFFFFF';
+  context.strokeStyle = node.color || settings('defaultNodeColor');
+  context.lineWidth = 2
+  //console.log(node.color)
   //let s = ss
   //let borderSize = context.measureText('|').width * 2
   //if (settings('labelSize') === 'fixed') {
@@ -140,7 +144,7 @@ sigma.canvas.nodes.def = function(node, context, settings) {
 
     let radius = height / 2
     let fill = true
-    let stroke = false
+    let stroke = true
 
     /*
     context.fillStyle = node.color || settings('defaultNodeColor');
@@ -302,7 +306,11 @@ sigma.canvas.edges.arrow = function(edge, source, target, context, settings) {
           break;
       }
 
-    if ((Math.abs(sY - tY) / Math.abs(sX - tX)) < 1) {
+    //if ((Math.abs(sY - tY) / Math.abs(sX - tX)) < 1) {
+    if (edge.label === 'Edge 6') {
+      //console.log((Math.abs(sY - tY) / Math.abs(sX - tX)))
+    }
+    if ((Math.abs(sY - tY) / Math.abs(sX - tX) < 3)) {
       if (sX > tX) {
         aX  = aX + (labelWidth[target.label] / 2)
       }
@@ -372,7 +380,7 @@ sigma.canvas.edges.curvedArrow =
       d = Math.sqrt(Math.pow(tX - cp.x, 2) + Math.pow(tY - cp.y, 2));
       aX = cp.x + (tX - cp.x) * (d - aSize - tSize) / d;
       //if ( (sX > tX) ) {
-      if ((Math.abs(sY - tY) / Math.abs(sX - tX)) < 1) {
+      if ((Math.abs(sY - tY) / Math.abs(sX - tX)) < 3) {
         if (sX < tX) {
           aX = aX - (labelWidth[target.label] / 2);
         }
@@ -475,16 +483,24 @@ sigma.canvas.edges.labels.curvedArrow =
       );
       angle = Math.atan2(1, 1); // 45°
     } else {
-      console.log(Math.abs(sY - tY) / Math.abs(sX - tX))
-      if ((Math.abs(sY - tY) / Math.abs(sX - tX) > 1) && (Math.abs(sY - tY) / Math.abs(sX - tX) < 3)) {
+      //console.log(Math.abs(sY - tY) / Math.abs(sX - tX))
+      //if ((Math.abs(sY - tY) / Math.abs(sX - tX) > 1) && (Math.abs(sY - tY) / Math.abs(sX - tX) < 3)) {
+      if (Math.abs(sY - tY) / Math.abs(sX - tX) < 3) {
         let width = labelWidth[target.label] / 2
         width = width * sign
+        
+        if (edge.label === 'Edge 10') {
+          //console.log((Math.abs(sY - tY) / Math.abs(sX - tX)))
+          console.log([width, sign])
+        }
         if (sX > tX) { 
-          tX = tX + width
+          tX = tX - width
+          tY = tY + width
           //tY = tY - labelWidth[target.label] / 2
         } 
         else if (sX < tX) { 
-          tX = tX - width
+          tX = tX + width
+          tY = tY - width
           //tY = tY - labelWidth[target.label] / 2
         }
         if (edge.label === 'Edge 10') {
@@ -601,7 +617,7 @@ sigma.canvas.edges.labels.def =
       turn = true
     }
     
-    if (Math.abs(sY - tY) / Math.abs(sX - tX) < 1) {
+    if (Math.abs(sY - tY) / Math.abs(sX - tX) < 3) {
       if (turn === false) {
         tX = tX + (labelWidth[target.label] / 2)
       }
@@ -691,7 +707,7 @@ for (let i = 0; i < n; i++) {
           //y: Math.sin(2 * i * Math.PI / n),
           //size: 30 * (i + 1),
           size: 30,
-          color: 'yellow'
+          color: '#cccccc'
           //color: '#66' + ((i + 1) * 3)
   });
 }
@@ -737,7 +753,7 @@ for (let i = 0; i < n*1.5; i++) {
     label: 'Edge ' + i,
     source: source,
     target: target,
-    size: 30,
+    size: 1 + (i * 10),
     color: '#ccc',
     //type: 'curvedArrow',
     type: type,
@@ -750,7 +766,8 @@ console.log(JSON.stringify(g))
 //g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n9","target":"n3","size":30,"color":"#ccc","type":"arrow","count":0},{"id":"e1","label":"Edge 1","source":"n8","target":"n1","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e2","label":"Edge 2","source":"n6","target":"n6","size":30,"color":"#ccc","type":"curvedArrow","count":2},{"id":"e3","label":"Edge 3","source":"n9","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":3},{"id":"e4","label":"Edge 4","source":"n5","target":"n4","size":30,"color":"#ccc","type":"arrow","count":4},{"id":"e5","label":"Edge 5","source":"n3","target":"n1","size":30,"color":"#ccc","type":"arrow","count":5},{"id":"e6","label":"Edge 6","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":6},{"id":"e7","label":"Edge 7","source":"n5","target":"n9","size":30,"color":"#ccc","type":"arrow","count":7},{"id":"e8","label":"Edge 8","source":"n6","target":"n6","size":30,"color":"#ccc","type":"curvedArrow","count":8},{"id":"e9","label":"Edge 9","source":"n9","target":"n7","size":30,"color":"#ccc","type":"arrow","count":9},{"id":"e10","label":"Edge 10","source":"n1","target":"n8","size":30,"color":"#ccc","type":"curvedArrow","count":10},{"id":"e11","label":"Edge 11","source":"n5","target":"n3","size":30,"color":"#ccc","type":"arrow","count":11},{"id":"e12","label":"Edge 12","source":"n6","target":"n7","size":30,"color":"#ccc","type":"arrow","count":12},{"id":"e13","label":"Edge 13","source":"n4","target":"n0","size":30,"color":"#ccc","type":"arrow","count":13},{"id":"e14","label":"Edge 14","source":"n0","target":"n3","size":30,"color":"#ccc","type":"arrow","count":14}]}
 //g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n8","target":"n0","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e1","label":"Edge 1","source":"n6","target":"n9","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e2","label":"Edge 2","source":"n1","target":"n3","size":30,"color":"#ccc","type":"curvedArrow","count":2},{"id":"e3","label":"Edge 3","source":"n1","target":"n3","size":30,"color":"#ccc","type":"curvedArrow","count":3},{"id":"e4","label":"Edge 4","source":"n5","target":"n5","size":30,"color":"#ccc","type":"curvedArrow","count":4},{"id":"e5","label":"Edge 5","source":"n3","target":"n2","size":30,"color":"#ccc","type":"arrow","count":5},{"id":"e6","label":"Edge 6","source":"n2","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":6},{"id":"e7","label":"Edge 7","source":"n7","target":"n4","size":30,"color":"#ccc","type":"arrow","count":7},{"id":"e8","label":"Edge 8","source":"n3","target":"n6","size":30,"color":"#ccc","type":"arrow","count":8},{"id":"e9","label":"Edge 9","source":"n9","target":"n3","size":30,"color":"#ccc","type":"arrow","count":9},{"id":"e10","label":"Edge 10","source":"n6","target":"n0","size":30,"color":"#ccc","type":"arrow","count":10},{"id":"e11","label":"Edge 11","source":"n3","target":"n8","size":30,"color":"#ccc","type":"arrow","count":11},{"id":"e12","label":"Edge 12","source":"n7","target":"n2","size":30,"color":"#ccc","type":"curvedArrow","count":12},{"id":"e13","label":"Edge 13","source":"n0","target":"n8","size":30,"color":"#ccc","type":"curvedArrow","count":13},{"id":"e14","label":"Edge 14","source":"n4","target":"n4","size":30,"color":"#ccc","type":"curvedArrow","count":14}]}
 //g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n0","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e1","label":"Edge 1","source":"n2","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e2","label":"Edge 2","source":"n5","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e3","label":"Edge 3","source":"n2","target":"n9","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e4","label":"Edge 4","source":"n2","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e5","label":"Edge 5","source":"n8","target":"n7","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e6","label":"Edge 6","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e7","label":"Edge 7","source":"n7","target":"n4","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e8","label":"Edge 8","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e9","label":"Edge 9","source":"n0","target":"n0","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e10","label":"Edge 10","source":"n3","target":"n7","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e11","label":"Edge 11","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e12","label":"Edge 12","source":"n5","target":"n7","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e13","label":"Edge 13","source":"n3","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e14","label":"Edge 14","source":"n2","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1}]}
-g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n7","target":"n1","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e1","label":"Edge 1","source":"n6","target":"n1","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e2","label":"Edge 2","source":"n8","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e3","label":"Edge 3","source":"n5","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e4","label":"Edge 4","source":"n7","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e5","label":"Edge 5","source":"n9","target":"n5","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e7","label":"Edge 7","source":"n3","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e8","label":"Edge 8","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e9","label":"Edge 9","source":"n5","target":"n2","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e10","label":"Edge 10","source":"n9","target":"n2","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e11","label":"Edge 11","source":"n9","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e12","label":"Edge 12","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e14","label":"Edge 14","source":"n8","target":"n0","size":30,"color":"#ccc","type":"arrow","count":1}]}
+//g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"yellow"},{"id":"n1","label":"Node 1","size":30,"color":"yellow"},{"id":"n2","label":"Node 2","size":30,"color":"yellow"},{"id":"n3","label":"Node 3","size":30,"color":"yellow"},{"id":"n4","label":"Node 4","size":30,"color":"yellow"},{"id":"n5","label":"Node 5","size":30,"color":"yellow"},{"id":"n6","label":"Node 6","size":30,"color":"yellow"},{"id":"n7","label":"Node 7","size":30,"color":"yellow"},{"id":"n8","label":"Node 8","size":30,"color":"yellow"},{"id":"n9","label":"Node 9","size":30,"color":"yellow"}],"edges":[{"id":"e0","label":"Edge 0","source":"n7","target":"n1","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e1","label":"Edge 1","source":"n6","target":"n1","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e2","label":"Edge 2","source":"n8","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e3","label":"Edge 3","source":"n5","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e4","label":"Edge 4","source":"n7","target":"n6","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e5","label":"Edge 5","source":"n9","target":"n5","size":30,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e7","label":"Edge 7","source":"n3","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e8","label":"Edge 8","source":"n4","target":"n8","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e9","label":"Edge 9","source":"n5","target":"n2","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e10","label":"Edge 10","source":"n9","target":"n2","size":30,"color":"#ccc","type":"arrow","count":1},{"id":"e11","label":"Edge 11","source":"n9","target":"n9","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e12","label":"Edge 12","source":"n7","target":"n7","size":30,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e14","label":"Edge 14","source":"n8","target":"n0","size":30,"color":"#ccc","type":"arrow","count":1}]}
+g = {"nodes":[{"id":"n0","label":"Node 0","size":30,"color":"#cccccc"},{"id":"n1","label":"Node 1","size":30,"color":"#cccccc"},{"id":"n2","label":"Node 2","size":30,"color":"#cccccc"},{"id":"n3","label":"Node 3","size":30,"color":"#cccccc"},{"id":"n4","label":"Node 4","size":30,"color":"#cccccc"},{"id":"n5","label":"Node 5","size":30,"color":"#cccccc"},{"id":"n6","label":"Node 6","size":30,"color":"#cccccc"},{"id":"n7","label":"Node 7","size":30,"color":"#cccccc"},{"id":"n8","label":"Node 8","size":30,"color":"#cccccc"},{"id":"n9","label":"Node 9","size":30,"color":"#cccccc"}],"edges":[{"id":"e0","label":"Edge 0","source":"n7","target":"n5","size":1,"color":"#ccc","type":"arrow","count":1},{"id":"e1","label":"Edge 1","source":"n0","target":"n5","size":11,"color":"#ccc","type":"arrow","count":1},{"id":"e2","label":"Edge 2","source":"n2","target":"n1","size":21,"color":"#ccc","type":"curvedArrow","count":1},{"id":"e3","label":"Edge 3","source":"n9","target":"n0","size":31,"color":"#ccc","type":"arrow","count":1},{"id":"e4","label":"Edge 4","source":"n4","target":"n3","size":41,"color":"#ccc","type":"arrow","count":1},{"id":"e5","label":"Edge 5","source":"n3","target":"n0","size":51,"color":"#ccc","type":"arrow","count":1},{"id":"e6","label":"Edge 6","source":"n3","target":"n9","size":61,"color":"#ccc","type":"arrow","count":1},{"id":"e7","label":"Edge 7","source":"n3","target":"n2","size":71,"color":"#ccc","type":"arrow","count":1},{"id":"e8","label":"Edge 8","source":"n9","target":"n8","size":81,"color":"#ccc","type":"arrow","count":1},{"id":"e9","label":"Edge 9","source":"n8","target":"n7","size":91,"color":"#ccc","type":"arrow","count":1},{"id":"e10","label":"Edge 10","source":"n1","target":"n2","size":101,"color":"#ccc","type":"curvedArrow","count":0},{"id":"e11","label":"Edge 11","source":"n9","target":"n4","size":111,"color":"#ccc","type":"arrow","count":1},{"id":"e14","label":"Edge 14","source":"n8","target":"n4","size":141,"color":"#ccc","type":"arrow","count":1}]}
 
 let ss = new sigma({
       graph: g,
@@ -763,7 +780,7 @@ let ss = new sigma({
         minNodeSize: 20,
         maxNodeSize: 20,
         //minEdgeSize: 2,
-        maxEdgeSize: 2,
+        maxEdgeSize: 5,
         //labelSize: "proportional",
         doubleClickEnabled: false,
         //defaultLabelAlignment: 'center',
