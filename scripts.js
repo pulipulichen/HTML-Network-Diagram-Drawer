@@ -31,7 +31,9 @@ var app = new Vue({
         this.upload(e)
       })
       
-      SigmaJSHelper.demo()
+      setTimeout(() => {
+        SigmaJSHelper.demo()
+      }, 0)
     },
     persist: function () {
       VueHelper.persist(this, 'fileType')
