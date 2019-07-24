@@ -15,8 +15,10 @@ let SigmaJSHelper = {
       g.nodes.push({
         id: 'n' + i,
         label: 'Node ' + i,
-        x: (0.3 + 0.5 * i),
-        y: (0.3 + 0.5 * i),
+        //x: (0.3 + 0.5 * i),
+        //y: (0.3 + 0.5 * i),
+        x: 100 * Math.cos(2 * i * Math.PI / N),
+        y: 100 * Math.sin(2 * i * Math.PI / N),
         size: 30 * (i + 1),
         color: '#66' + ((i + 1) * 3)
       });
@@ -67,6 +69,12 @@ let SigmaJSHelper = {
         minArrowSize: 10
       }
     });
+    
+    // Start the ForceAtlas2 algorithm:
+    setTimeout(() => {
+      s.startForceAtlas2({worker: true, barnesHutOptimize: false});
+    }, 3000)
+    //s.startForceAtlas2({worker: true, barnesHutOptimize: false});
   },
   draw: function (data, container) {
     if (typeof(container.attr) === 'function') {
