@@ -1,4 +1,6 @@
-let labelWidth = {}
+if (typeof(labelWidth) === 'undefined') {
+  labelWidth = {}
+}
 
 sigma.canvas.labels.def = function(node, context, settings) {
   if (typeof(labelWidth[node.label]) === 'undefined') {

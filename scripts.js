@@ -11,6 +11,9 @@ var app = new Vue({
   },
   computed: {
     output: function () {
+      //console.log(CSVHelper.parseStringToArray(this.input))
+      let data = CSVHelper.parseStringToArray(this.input)
+      SigmaJSHelper.draw(data, this.$refs.graphContainer)
       return ''
     },
     outputTitle: function () {
@@ -31,9 +34,9 @@ var app = new Vue({
         this.upload(e)
       })
       
-      setTimeout(() => {
-        SigmaJSHelper.demo()
-      }, 0)
+      //setTimeout(() => {
+        //SigmaJSHelper.demo()
+      //}, 0)
     },
     persist: function () {
       VueHelper.persist(this, 'fileType')

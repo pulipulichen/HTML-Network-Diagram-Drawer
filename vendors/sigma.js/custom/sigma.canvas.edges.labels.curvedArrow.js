@@ -1,4 +1,6 @@
-let labelWidth = {}
+if (typeof(labelWidth) === 'undefined') {
+  labelWidth = {}
+}
 
 sigma.canvas.edges.labels.curvedArrow =
     function(edge, source, target, context, settings) {

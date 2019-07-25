@@ -71,12 +71,13 @@ let SigmaJSHelper = {
   baseURL: null,
   load: function (callback) {
     if (this.baseURL === null) {
-      let helperURL = $('script[src^="/SigmaJSHelper.js"]').attr('src')
-      this.baseURL = helperURL.slice(0, helperURL.indexOf('/helpers/'))
+      let helperURL = $('script[src$="/SigmaJSHelper.js"]').attr('src')
+      this.baseURL = helperURL.slice(0, helperURL.indexOf('/helpers/') + 1)
       
       let loop = (i) => {
         if (i < this.loadList.length) {
           let scriptURL = this.baseURL + this.loadList[i]
+          console.log(scriptURL)
           $.getScript(scriptURL, () => {
             i++
             loop(i)
@@ -208,6 +209,7 @@ let SigmaJSHelper = {
   draw: function (data, container, callback) {
     this.load(() => {
       let g = this.loadGraph(data)
+      return
       let s = new sigma({
           graph: g,
           renderer: {
@@ -228,6 +230,11 @@ let SigmaJSHelper = {
         });
       this.startLayout
       
+      this.enableDrag(s)
+      this.startLayoutDagre(s)
+      if (typeof(callback) === 'function') {
+        callback(s)
+      }
     })
   },
   loadGraph: function (data) {

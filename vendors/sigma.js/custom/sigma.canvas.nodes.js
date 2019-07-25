@@ -1,5 +1,6 @@
-//SigmaJSHelper.demo()
-let labelWidth = {}
+if (typeof(labelWidth) === 'undefined') {
+  labelWidth = {}
+}
 
 sigma.canvas.nodes.def = function(node, context, settings) {
   var prefix = settings('prefix') || '',

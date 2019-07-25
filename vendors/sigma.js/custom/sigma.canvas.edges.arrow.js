@@ -1,4 +1,6 @@
-let labelWidth = {}
+if (typeof(labelWidth) === 'undefined') {
+  labelWidth = {}
+}
 
 sigma.canvas.edges.arrow = function(edge, source, target, context, settings) {
     if (typeof(labelWidth[target.label]) === 'undefined') {

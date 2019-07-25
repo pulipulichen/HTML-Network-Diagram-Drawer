@@ -1,5 +1,5 @@
 let CSVHelper = {
-  convertStringToArray: function (string) {
+  parseStringToArray: function (string) {
     let output = []
     
     let fieldList = []
