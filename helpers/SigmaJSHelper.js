@@ -69,21 +69,28 @@ let SigmaJSHelper = {
     "vendors/sigma.js/custom/sigma.canvas.edges.labels.js",
   ],
   baseURL: null,
+  isLoading: false,
   load: function (callback) {
+    if (this.isLoading === true) {
+      return this.wait(callback)
+    }
+    
     if (this.baseURL === null) {
+      this.isLoading = true
       let helperURL = $('script[src$="/SigmaJSHelper.js"]').attr('src')
       this.baseURL = helperURL.slice(0, helperURL.indexOf('/helpers/') + 1)
       
       let loop = (i) => {
         if (i < this.loadList.length) {
           let scriptURL = this.baseURL + this.loadList[i]
-          console.log(scriptURL)
+          //console.log(scriptURL)
           $.getScript(scriptURL, () => {
             i++
             loop(i)
           })
         }
         else {
+          this.isLoading = false
           if (typeof(callback) === 'function') {
             callback()
           }
@@ -96,6 +103,16 @@ let SigmaJSHelper = {
         callback()
       }
     }
+  },
+  wait: function (callback) {
+    setTimeout(() => {
+      if (this.isLoading === true) {
+        this.wait(callback)
+      }
+      else {
+        callback()
+      }
+    }, 1000)
   },
   enableDrag: function (s) {
     //var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
@@ -207,9 +224,26 @@ let SigmaJSHelper = {
     //s.startForceAtlas2({worker: true, barnesHutOptimize: false});
   },
   draw: function (data, container, callback) {
+    //console.log(dataAAA)
+    //data = JSON.parse(JSON.stringify(data))
+    
     this.load(() => {
+      //console.log(data)
+      //let data = dataAAA
+      if (Array.isArray(data) === false 
+              || data.length === 0) {
+        return
+      }
+      
+      //console.log(data)
+      //console.log($(container).prop('className'))
+      if ($(container).hasClass('sigma-inited')) {
+        $(container).html('')
+      }
+      
       let g = this.loadGraph(data)
-      return
+      //console.log(g)
+      //return
       let s = new sigma({
           graph: g,
           renderer: {
@@ -235,6 +269,9 @@ let SigmaJSHelper = {
       if (typeof(callback) === 'function') {
         callback(s)
       }
+      
+      // 把container加上
+      $(container).addClass('sigma-inited')
     })
   },
   loadGraph: function (data) {
@@ -247,11 +284,7 @@ let SigmaJSHelper = {
       g.nodes = this.parseNodes(data)
       
       data = this.normalizeSize(data)
-      data.forEach(edge => {
-        let source = edge.source
-        let target = edge.target
-        let size = edge.edgeWeight
-      })
+      g.edges = this.parseEdges(data)
     }
     
     return g
@@ -292,7 +325,7 @@ let SigmaJSHelper = {
         let source = this.nodesMap[edge.source].id
         let target = this.nodesMap[edge.target].id
         let size = edge.edgeWeight
-        let edgeLabel = this.edgeLabel
+        let edgeLabel = edge.edgeLabel
         
         let key = [source,target].join('-')
         let keySort = [source,target].sort().join('-')

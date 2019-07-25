@@ -1,5 +1,7 @@
 source,target,edgeWeight,edgeLabel
-A,B,1,A->B
-B,A,2,BA
-B,A,3,BBAA
-C,A,1,可以嗎
+My,Hello,2,BA
+Happy,Hello,3,BBAA
+Happy,World,1,可以嗎
+World,Happy,2,Interaction
+My,Hello,3,BBAA
+My,My,2,LOOP

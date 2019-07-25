@@ -3,21 +3,34 @@ var app = new Vue({
   el: '#app',
   data: {
     input: '',
-    fileType: 'ods'
+    fileType: 'svg',
   },
   mounted() {
-    VueHelper.mount(this, 'fileType')
+    VueHelper.mount(this, 'fileType', 'svg')
     this.init()
   },
+  /*
   computed: {
     output: function () {
       //console.log(CSVHelper.parseStringToArray(this.input))
-      let data = CSVHelper.parseStringToArray(this.input)
+      var data = CSVHelper.parseStringToArray(this.input)
+      console.log(data)
+      
       SigmaJSHelper.draw(data, this.$refs.graphContainer)
       return ''
     },
     outputTitle: function () {
       return ''
+    }
+    
+  },
+  */
+  watch: {
+    input: function (input) {
+      var data = CSVHelper.parseStringToArray(input)
+      //console.log(data)
+      
+      SigmaJSHelper.draw(data, this.$refs.graphContainer)
     }
   },
   methods: {
