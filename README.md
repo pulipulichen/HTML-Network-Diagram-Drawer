@@ -1,6 +1,10 @@
 # HTML-Network-Diagram-Drawer
 Draw a network diagram from CSV data
 
+- Project: https://github.com/pulipulichen/HTML5-Network-Diagram-Drawer
+- Demo: https://pulipulichen.github.io/HTML5-Network-Diagram-Drawer/
+- Issues: https://github.com/pulipulichen/HTML5-Network-Diagram-Drawer/issues
+
 # ICON
 - Network Icons - Iconshock: https://www.iconshock.com/material-design-icons/general-icons/network-icon/
 

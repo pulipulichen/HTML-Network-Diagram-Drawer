@@ -1,4 +1,5 @@
-from,to,connectWeight,nodeSize,nodeColor
-A,B,1,2,red
-B,A,2,3,blue
-C,A,1,1,green
+source,target,edgeWeight,edgeLabel
+A,B,1,A->B
+B,A,2,BA
+B,A,3,BBAA
+C,A,1,可以嗎
