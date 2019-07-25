@@ -35,6 +35,7 @@
     <!-- Style --->
     
     <link rel="stylesheet/less" type="text/css" href="styles.less" />
+    <link rel="stylesheet/less" type="text/css" href="sigmajs.less" />
     <script>
       less = {
         logLevel: 0,
@@ -42,23 +43,8 @@
     </script>
     <script src="vendors/less/less.min.js" ></script>
     
-  <style>
-    #graph-container {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      position: absolute;
-    }
-    #container {
-      max-width: 400px;
-      height: 400px;
-      max-width: 400px;
-      overflow: hidden;
-      margin: auto;
-    }
-  </style>
     <link rel="icon" type="image/svg" href="icon.svg" />
+    <link rel="icon" type="image/png" href="icon.png" />
   </head>
   <body>
     <div id="app"
@@ -98,33 +84,28 @@
           </div>
           <div class="ten wide column">
             
-            <div class="three fields">
-              <div class="eight wide field">
-                <label>&nbsp;</label>
-                <select name="fileType" 
-                        v-model="fileType" 
-                        v-on:change="persist">
-                  <option value="png">PNG Image (.ods)</option>
-                  <option value="svg">Scalable Vector Graphics (.svg)</option>
-                </select>
+            <div class="two fields">
+              <div class=" field ">
+                  <label>&nbsp;</label>
+                  <select name="fileType" 
+                          v-model="fileType" 
+                          v-on:change="persist"
+                          class="ui search dropdown"
+                          ref="select">
+                    <option value="png">PNG Image (.ods)</option>
+                    <option value="svg">Scalable Vector Graphics (.svg)</option>
+                  </select>
               </div>
-              <div class="four wide field">
-                <label>&nbsp;</label>
-                <button type="button"
-                        class="ui labeled icon fluid green button" 
-                        v-on:click="download">
-                  <i class="download icon"></i>
-                  DOWNLOAD
-                </button>
-              </div>
-              <div class="four wide field">
-                <label>&nbsp;</label>
-                <button type="button"
-                        class="ui labeled icon fluid green button" 
-                        v-on:click="copy">
-                  <i class="copy icon"></i>
-                  COPY
-                </button>
+              <div class="field">
+                <div class="ui dropdown input">
+                  <label>&nbsp;</label>
+                  <button type="button"
+                          class="ui labeled icon fluid green button" 
+                          v-on:click="download">
+                    <i class="download icon"></i>
+                    DOWNLOAD
+                  </button>
+                </div>
               </div>
             </div>
             

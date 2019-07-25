@@ -1,5 +1,5 @@
 Vue.config.productionTip = false
-var app = new Vue({
+let config = {
   el: '#app',
   data: {
     input: '',
@@ -27,15 +27,17 @@ var app = new Vue({
   */
   watch: {
     input: function (input) {
-      var data = CSVHelper.parseStringToArray(input)
+      let data = CSVHelper.parseStringToArray(input)
       //console.log(data)
-      
+      //return 
       SigmaJSHelper.draw(data, this.$refs.graphContainer)
     }
   },
   methods: {
     init: function () {
-      $(this.$refs.modal).find('.ui.dropdown').dropdown()
+      //console.log($(this.$refs.modal).find('.ui.dropdown').length)
+      //console.log($(this.$refs.select).length)
+      $(this.$refs.select).dropdown()
 
       // 載入檔案
       $.get('./data.csv', (data) => {
@@ -69,7 +71,9 @@ var app = new Vue({
       })
     },
     download: function () {
-      console.log('download')
+      console.log(['download', this.fileType])
     }
   }
-})
+}
+
+var app = new Vue(config)

@@ -259,7 +259,7 @@ let SigmaJSHelper = {
             //labelSize: "proportional",
             doubleClickEnabled: false,
             //defaultLabelAlignment: 'center',
-            sideMargin: 100,
+            sideMargin: 20,
           }
         });
       this.startLayout
