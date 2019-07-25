@@ -119,7 +119,10 @@ let SigmaJSHelper = {
   },
   enableDrag: function (s) {
     //var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
-    sigma.plugins.dragNodes(s, s.renderers[0])
+    let dragListener = sigma.plugins.dragNodes(s, s.renderers[0])
+    dragListener.bind('dragend', function(event) {
+      s.cleanUp()
+    });
     return this
   },
   startLayoutDagre: function (s) {
@@ -164,32 +167,45 @@ let SigmaJSHelper = {
             minNodeSize: 20,
             maxNodeSize: 20,
             //minEdgeSize: 2,
-            maxEdgeSize: 5,
+            maxEdgeSize: 2,
             //labelSize: "proportional",
             doubleClickEnabled: false,
             //defaultLabelAlignment: 'center',
             sideMargin: 20,
           }
         });
-      //this.startLayout
       
       this.enableDrag(s)
       this.startLayoutDagre(s)
       // 把container加上
       $(container).addClass('sigma-inited')
       //container.append('' s.renderers[0].contexts["scene"].getSerializedSvg())
-      container.append(s.renderers[0].contexts["scene"].getSvg())
+      let svg = s.renderers[0].contexts["scene"].getSvg()
+      container.append(svg)
       s.getSerializedSvg = () => {
-        return s.renderers[0].contexts["scene"].getSerializedSvg()
+        s.cleanUp()
+        return s.renderers[0].contexts["scene"].getSerializedSvg(true)
+      }
+      s.cleanUp = () => {
+        this.cleanUp(svg)
       }
       
+      $(container).find('.sigma-mouse:first').bind('mouseup', () => {
+        s.cleanUp()
+      })
+      
+      
       if (typeof(callback) === 'function') {
-        console.log(s)
-        SSS = s
+        //console.log(s)
+        //SSS = s
         callback(s)
       }
       
     })
+  },
+  cleanUp: function (svg) {
+    $(svg).find('g > rect[fill="#FFFFFF"][stroke="none"][x="0"][y="0"]:last').prevAll().remove()
+    return this
   },
   loadGraph: function (data) {
     let g = {
@@ -206,8 +222,8 @@ let SigmaJSHelper = {
     
     return g
   },
-  minSize: 2,
-  maxSize: 20,
+  minSize: 4,
+  maxSize: 30,
   normalizeSize: function (data) {
     let minSizeTemp
     let maxSizeTemp

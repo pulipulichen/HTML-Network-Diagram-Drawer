@@ -81,20 +81,8 @@
             </div>
           </div>
           <div class="ten wide column">
-            
-            <div class="two fields">
-              <div class=" field ">
-                  <label>&nbsp;</label>
-                  <select name="fileType" 
-                          v-model="fileType" 
-                          v-on:change="persist"
-                          class="ui search dropdown"
-                          ref="select">
-                    <option value="png">PNG Image (.ods)</option>
-                    <option value="svg">Scalable Vector Graphics (.svg)</option>
-                  </select>
-              </div>
-              <div class="field">
+          
+            <div class="field">
                 <div class="ui dropdown input">
                   <label>&nbsp;</label>
                   <button type="button"
@@ -105,7 +93,6 @@
                   </button>
                 </div>
               </div>
-            </div>
             
             <!--
             <div v-html="output" class="output"></div>
