@@ -177,6 +177,11 @@ let SigmaJSHelper = {
       this.startLayoutDagre(s)
       // 把container加上
       $(container).addClass('sigma-inited')
+      //container.append('' s.renderers[0].contexts["scene"].getSerializedSvg())
+      container.append(s.renderers[0].contexts["scene"].getSvg())
+      s.getSerializedSvg = () => {
+        return s.renderers[0].contexts["scene"].getSerializedSvg()
+      }
       
       if (typeof(callback) === 'function') {
         console.log(s)
