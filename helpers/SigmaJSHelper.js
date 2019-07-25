@@ -204,7 +204,9 @@ let SigmaJSHelper = {
     })
   },
   cleanUp: function (svg) {
-    $(svg).find('g > rect[fill="#FFFFFF"][stroke="none"][x="0"][y="0"]:last').prevAll().remove()
+    let rect = $(svg).find('g > rect[fill="#FFFFFF"][stroke="none"][x="0"][y="0"]:last')
+    rect.prevAll().remove()
+    rect.remove()
     return this
   },
   loadGraph: function (data) {
