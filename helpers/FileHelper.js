@@ -17,9 +17,12 @@ let FileHelper = {
     document.body.removeChild(link);
     //delete link;
   },
-  downlaod: function (filename, content) {
-    let blob = new Blob([content])
-    saveAs(blob, filename)
+  download: function (filename, content) {
+    return this.saveAs(filename, content)
+  },
+  saveAs: function (filename, content) {
+    content = new Blob([content])
+    saveAs(content, filename)
   },
   
   // ---------------------

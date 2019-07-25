@@ -342,9 +342,24 @@
 
     this.domElements[id] = dom;
     this.container.appendChild(dom);
-
-    if (tag.toLowerCase() === 'canvas')
-      this.contexts[id] = dom.getContext('2d');
+    
+    if (tag.toLowerCase() === 'canvas') {
+      //this.contexts[id] = dom.getContext('2d');
+      //console.log(dom)
+      //let width = parseInt(dom.width.slice(0, -2), 10)
+      //let height = parseInt(dom.height.slice(0, -2), 10)
+      //let width = dom.width
+      //let height = dom.height
+      //console.log([width, height])
+      //console.log(this.container)
+      let $container = $(this.container)
+      
+      
+      this.contexts[id] = new C2S($container.width(), $container.height())
+    }
+    //console.log(tag)
+    //console.log(this.contexts[id])
+    console.log(id)
   };
 
   /**

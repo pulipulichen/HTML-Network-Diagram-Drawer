@@ -4,6 +4,7 @@ let config = {
   data: {
     input: '',
     fileType: 'svg',
+    sigmaJS: null,
   },
   mounted() {
     VueHelper.mount(this, 'fileType', 'svg')
@@ -30,7 +31,11 @@ let config = {
       let data = CSVHelper.parseStringToArray(input)
       //console.log(data)
       //return 
-      SigmaJSHelper.draw(data, this.$refs.graphContainer)
+      SigmaJSHelper.draw(data, this.$refs.graphContainer, (s) => {
+        console.log(s)
+        this.sigmaJS = s
+        AAA = s
+      })
     }
   },
   methods: {
@@ -71,7 +76,25 @@ let config = {
       })
     },
     download: function () {
-      console.log(['download', this.fileType])
+      if (this.sigmaJS === null) {
+        console.log(this.sigmaJS)
+        return
+      }
+      
+      FileHelper.saveAs("A.svg", SSS.renderers[0].contexts["scene"].getSerializedSvg())
+      return
+      
+      //console.log(['download', this.fileType])
+      //this.sigmaJS.toSVG({download: true, filename: 'mygraph.svg', size: 1000});
+      let sigmaCanvas = $(this.$refs.graphContainer).children('canvas.sigma-scene')[0]
+      
+      //let MIME = "image/png"
+      //let MIME = "image/jpeg"
+      let MIME = "image/gif"
+      var img = sigmaCanvas.toDataURL(MIME);
+      //document.write('<img src="'+img+'"/>');
+      //console.log(img)
+      FileHelper.downloadByURL('a.gif', img)
     }
   }
 }
