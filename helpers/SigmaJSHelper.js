@@ -167,15 +167,15 @@ let SigmaJSHelper = {
       //easing: true,
       //duration: 3000
     };
-//ss.configNoverlap(config);
+    //ss.configNoverlap(config);
 
-// Configure the algorithm
+    // Configure the algorithm
     var listener = s.configNoverlap(config);
 
-// Bind all events:
-    listener.bind('stop', function (event) {
-      console.log('noverlay stop')
-    });
+    // Bind all events:
+    //listener.bind('stop', function (event) {
+    //  console.log('noverlay stop')
+    //});
 
     s.startNoverlap();
   },
@@ -222,9 +222,9 @@ let SigmaJSHelper = {
       
       this.enableDrag(s)
       
-      //this.startLayoutDagre(s)
+      this.startLayoutDagre(s)
       //this.startLayoutForceAtlas2(s)
-      this.startLayoutNoverlap(s)
+      //this.startLayoutNoverlap(s)
       
       // 把container加上
       $(container).addClass('sigma-inited')
@@ -265,6 +265,7 @@ let SigmaJSHelper = {
     }
     
     if (Array.isArray(data)) {
+      data = this.mergeNodes(data)
       g.nodes = this.parseNodes(data)
       //console.log(g.nodes)
       //return
@@ -433,6 +434,152 @@ let SigmaJSHelper = {
         x: Math.cos(2 * i * Math.PI / n) * 100,
         y: Math.sin(2 * i * Math.PI / n) * 100,
     }
+  },
+  mergeNodes: function (data) {
+    let mergeLabelsLengthLimitSort = 10
+    let mergeLabelsLengthLimitHard = Math.round(mergeLabelsLengthLimitSort * 1.5)
+    
+    if (Array.isArray(data)) {
+      let nodes = []
+      // -------------------------
+      // 找出每個node的target
+      let nodesTarget = {}
+      let nodesSource = {}
+      data.forEach(edge => {
+        if (nodes.indexOf(edge.source) === -1) {
+          nodes.push(edge.source)
+        }
+        if (nodes.indexOf(edge.target) === -1) {
+          nodes.push(edge.target)
+        }
+        
+        let surfix = '_' + edge.edgeWeight + '_' + edge.edgeLabel
+        
+        // 先以source角度來看target
+        if (Array.isArray(nodesTarget[edge.source]) === false) {
+          nodesTarget[edge.source] = []
+        } 
+        if (nodesTarget[edge.source].indexOf(edge.target + surfix) === -1) {
+          nodesTarget[edge.source].push(edge.target + surfix)
+        }
+        
+        // 先以source角度來看target
+        if (Array.isArray(nodesSource[edge.target]) === false) {
+          nodesSource[edge.target] = []
+        } 
+        if (nodesSource[edge.target].indexOf(edge.source + surfix) === -1) {
+          nodesSource[edge.target].push(edge.source + surfix)
+        }
+      })
+      
+      let overlapMap = {}
+      let overlapCheck = {}
+      nodes.forEach(node => {
+        let targetList = ''
+        if (Array.isArray(nodesTarget[node])) {
+          targetList = nodesTarget[node].join('-')
+        }
+        let sourceList = ''
+        if (Array.isArray(nodesSource[node])) {
+          sourceList = nodesSource[node].join('-')
+        }
+        let key = sourceList + '|' + targetList
+        if (Array.isArray(overlapMap[key]) === false) {
+          overlapMap[key] = []
+        }
+        overlapMap[key].push(node)
+        if (overlapMap[key].length > 1) {
+          overlapCheck[key] = true
+        }
+      })
+      
+      // 需要合併這兩個
+      for (let key in overlapCheck) {
+        // 這是有問題的項目
+        let mergeLabels = overlapMap[key].join(',')
+        if (mergeLabels.length > mergeLabelsLengthLimitSort && mergeLabels.indexOf(',', mergeLabelsLengthLimitSort) > -1) {
+          mergeLabels = mergeLabels.slice(0, mergeLabels.indexOf(',', mergeLabelsLengthLimitSort))
+          
+          if (mergeLabels.length > mergeLabelsLengthLimitHard) {
+            mergeLabels = mergeLabels.slice(0, mergeLabelsLengthLimitHard)
+          }
+          mergeLabels = mergeLabels + '...'
+        }
+        
+        mergeLabels = mergeLabels + ' (' + overlapMap[key].length + ')'
+        
+        
+        // 整理搜尋條件
+        let searchParts = key.split('|')
+        let sourceSearch
+        if (searchParts[0].length > 0) {
+          sourceSearch = searchParts[0].split('_')
+          sourceSearch[1] = parseInt(sourceSearch[1], 10)
+        }
+        let targetSearch
+        if (searchParts[1].length > 0) {
+          targetSearch = searchParts[1].split('_')
+          targetSearch[1] = parseInt(targetSearch[1], 10)
+        }
+        //console.log(searchParts)
+        //console.log(sourceSearch)
+        //console.log(targetSearch)
+        // 取代連線裡面的節點
+        
+        let isSourceReplaced = false
+        let isTargetReplaced = false
+        let removeIndex = []
+        for (let i = 0; i < data.length; i++) {
+          let source = data[i].source
+          let target = data[i].target
+          let edgeWeight = data[i].edgeWeight
+          let edgeLabel = data[i].edgeLabel
+
+          if (sourceSearch !== undefined
+                  && overlapMap[key].indexOf(target) > -1
+                  && source === sourceSearch[0]
+                  && edgeWeight === sourceSearch[1]
+                  && edgeLabel === sourceSearch[2]) {
+            if (isTargetReplaced === false) {
+              data[i].target = mergeLabels
+              isTargetReplaced = true
+            }
+            else {
+              removeIndex.push(i)
+            }
+          }
+
+          if (targetSearch !== undefined
+                  && overlapMap[key].indexOf(source) > -1
+                  && target === targetSearch[0]
+                  && edgeWeight === targetSearch[1]
+                  && edgeLabel === targetSearch[2]) {
+            if (isSourceReplaced === false) {
+              data[i].source = mergeLabels
+              isSourceReplaced = true
+            }
+            else {
+              removeIndex.push(i)
+            }
+          }
+        } // for (let i = 0; i < data.length; i++) {
+
+        //console.log(removeIndex)
+        data = data.filter((value, index) => {
+          return (removeIndex.indexOf(index) === -1)
+        })
+      }
+      
+      //console.log(nodes)
+      //console.log(nodesTarget)
+      //console.log(nodesSource)
+      //console.log(overlapMap)
+      //console.log(overlapCheck)
+      
+      console.log(data)
+    }
+    
+    return data
   }
 }
 window.SigmaJSHelper = SigmaJSHelper

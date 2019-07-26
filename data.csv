@@ -5,4 +5,6 @@ Happy,World,1,可以嗎
 World,Happy,2,Interaction
 My,Hello,3,BBAA
 Your,Hello,3,BBAA
+We,My,1,Bottom-Top
+We,Your,1,Bottom-Top
 Hello,Hello,2,LOOP
