@@ -58,7 +58,11 @@ let SigmaJSHelper = {
     "vendors/sigma.js/plugins/sigma.plugins.animate/sigma.plugins.animate.js",
     "vendors/sigma.js/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js",
     "vendors/sigma.js/plugins/sigma.layout.dagre/dagre.js",
+    
     "vendors/sigma.js/plugins/sigma.layout.dagre/sigma.layout.dagre.js",
+    "vendors/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js",
+    "vendors/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js",
+    "vendors/sigma.js/plugins/sigma.layout.noverlap/sigma.layout.noverlap.js",
     
     "vendors/sigma.js/custom/sigma.canvas.nodes.js",
     "vendors/sigma.js/custom/sigma.canvas.labels.js",
@@ -125,14 +129,55 @@ let SigmaJSHelper = {
     });
     return this
   },
+  startLayoutForceAtlas2: function (s) {
+    s.startForceAtlas2({
+      worker: true, 
+      adjustSizes: true,
+      barnesHutOptimize: false,
+      slowDown: 0.1,
+      strongGravityMode: true,
+      edgeWeightInfluence: 1,
+      scalingRatio: 2,
+      outboundAttractionDistribution: true,
+      linLogMode: true,
+      autoRescale: true,
+    });
+    setTimeout(() => {
+      s.stopForceAtlas2()
+      console.log('stopForceAtlas2')
+      //var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
+    }, this.nodesCount * this.edgesCount * 1000)
+  },
   startLayoutDagre: function (s) {
     var config = {
       directed: true,
       rankdir: 'BT'
+      //rankdir: 'LR'
     };
     sigma.layouts.dagre.start(s, config)
     sigma.layouts.dagre.start(s)
     return this
+  },
+  startLayoutNoverlap: function (s) {
+    let config = {
+      nodeMargin: 3.0,
+      //scaleNodes: 1.3,
+      maxIterations: 1000,
+      speed: 0.5,
+      //easing: true,
+      //duration: 3000
+    };
+//ss.configNoverlap(config);
+
+// Configure the algorithm
+    var listener = s.configNoverlap(config);
+
+// Bind all events:
+    listener.bind('stop', function (event) {
+      console.log('noverlay stop')
+    });
+
+    s.startNoverlap();
   },
   draw: function (data, container, callback) {
     //console.log(dataAAA)
@@ -176,7 +221,11 @@ let SigmaJSHelper = {
         });
       
       this.enableDrag(s)
-      this.startLayoutDagre(s)
+      
+      //this.startLayoutDagre(s)
+      //this.startLayoutForceAtlas2(s)
+      this.startLayoutNoverlap(s)
+      
       // 把container加上
       $(container).addClass('sigma-inited')
       //container.append('' s.renderers[0].contexts["scene"].getSerializedSvg())
@@ -197,7 +246,7 @@ let SigmaJSHelper = {
       
       if (typeof(callback) === 'function') {
         //console.log(s)
-        //SSS = s
+        SSS = s
         callback(s)
       }
       
@@ -217,7 +266,8 @@ let SigmaJSHelper = {
     
     if (Array.isArray(data)) {
       g.nodes = this.parseNodes(data)
-      
+      //console.log(g.nodes)
+      //return
       data = this.normalizeSize(data)
       g.edges = this.parseEdges(data)
     }
@@ -307,6 +357,8 @@ let SigmaJSHelper = {
       })
     }
     
+    this.edgesCount = idCounter
+    
     return edgesArray
   },
   buildEdge: function (edgeId, edgeLabel, sourceNodeId, targetNodeId, size, type, count) {
@@ -324,6 +376,8 @@ let SigmaJSHelper = {
     }
   },
   nodesMap: {},
+  nodesCount: null,
+  edgesCount: null,
   parseNodes: function (data) {
     let nodesMap = {}
     let idCounter = 0
@@ -331,26 +385,40 @@ let SigmaJSHelper = {
       data.forEach(edge => {
         let source = edge.source
         if (typeof(nodesMap[source]) === 'undefined') {
-          nodesMap[source] = this.buildNode(idCounter, source)
+          //nodesMap[source] = this.buildNode(idCounter, source)
+          nodesMap[source] = {
+            label: source,
+            id: idCounter
+          }
           idCounter++
         }
         
         let target = edge.target
         if (typeof(nodesMap[target]) === 'undefined') {
-          nodesMap[target] = this.buildNode(idCounter, target)
+          //nodesMap[target] = this.buildNode(idCounter, target)
+          nodesMap[target] = {
+            label: target,
+            id: idCounter
+          }
           idCounter++
         }
       })
     }
     
-    this.nodesMap = nodesMap
+    this.nodesCount = idCounter
+    
     let nodesArray = []
     for (let key in nodesMap) {
-      nodesArray.push(nodesMap[key])
+      let nodeInfo = nodesMap[key]
+      let node = this.buildNode(nodeInfo.id, nodeInfo.label, this.nodesCount)
+      nodesArray.push(node)
+      this.nodesMap[key] = node
     }
+    //this.nodesMap = nodesMap
+    //console.log(this.nodesMap)
     return nodesArray
   },
-  buildNode: function (i, label) {
+  buildNode: function (i, label, n) {
     return {
         id: 'node_' + i,
         label: label,
@@ -360,8 +428,10 @@ let SigmaJSHelper = {
         //y: Math.sin(2 * i * Math.PI / n),
         //size: 30 * (i + 1),
         size: 30,
-        color: '#cccccc'
+        color: '#cccccc',
         //color: '#66' + ((i + 1) * 3)
+        x: Math.cos(2 * i * Math.PI / n) * 100,
+        y: Math.sin(2 * i * Math.PI / n) * 100,
     }
   }
 }

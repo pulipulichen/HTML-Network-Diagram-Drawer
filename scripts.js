@@ -28,7 +28,13 @@ let config = {
   */
   watch: {
     input: function (input) {
-      let data = CSVHelper.parseStringToArray(input)
+      let data
+      if (input.indexOf('=== Run information ===') === -1) {
+        data = CSVHelper.parseStringToArray(input)
+      }
+      else {
+        data = WekaHelper.parseAssociationRunInformation(input)
+      }
       //console.log(data)
       //return 
       SigmaJSHelper.draw(data, this.$refs.graphContainer, (s) => {
@@ -45,7 +51,10 @@ let config = {
       $(this.$refs.select).dropdown()
 
       // 載入檔案
-      $.get('./data.csv', (data) => {
+      //let preloadFile = './data.csv'
+      //let preloadFile = './0724-1511-number.txt'
+      let preloadFile = './0724-1511-number50.txt'
+      $.get(preloadFile, (data) => {
         this.input = data
       })
 
