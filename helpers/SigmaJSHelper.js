@@ -213,7 +213,7 @@ let SigmaJSHelper = {
             maxNodeSize: 20,
             //minEdgeSize: 2,
             maxEdgeSize: 2,
-            //labelSize: "proportional",
+            labelSize: "proportional",  // 不做fixed
             doubleClickEnabled: false,
             //defaultLabelAlignment: 'center',
             sideMargin: 20,

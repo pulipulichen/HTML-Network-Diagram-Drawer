@@ -1,7 +1,8 @@
 source,target,edgeWeight,edgeLabel
-My,Hello,2,BA
-Happy,Hello,3,BBAA
+Happy,Hello,3,OVERLAP1
+Happy,Hello,2,OVERLAP2
 Happy,World,1,可以嗎
 World,Happy,2,Interaction
 My,Hello,3,BBAA
-My,My,2,LOOP
+Your,Hello,3,BBAA
+Hello,Hello,2,LOOP

@@ -2,10 +2,17 @@ if (typeof(labelWidth) === 'undefined') {
   labelWidth = {}
 }
 
-sigma.canvas.nodes.def = function(node, context, settings) {
+/**
+ * https://github.com/pulipulichen/sigma.js/blob/master/src/renderers/canvas/sigma.canvas.nodes.def.js#L23
+ * @param {type} node
+ * @param {type} context
+ * @param {type} settings
+ * @returns {undefined}
+ */
+sigma.canvas.nodes.defAAA = function(node, context, settings) {
   var prefix = settings('prefix') || '',
       size = node[prefix + 'size']
-      
+  
   context.fillStyle = '#FFFFFF';
   context.strokeStyle = node.color || settings('defaultNodeColor');
   context.lineWidth = 2
@@ -24,9 +31,18 @@ sigma.canvas.nodes.def = function(node, context, settings) {
     //let y = node[prefix + 'y'] - size
     if (typeof(labelWidth[node.label]) === 'undefined') {
       labelWidth[node.label] = context.measureText(node.label).width
+      //labelWidth[node.label] = settings('defaultLabelSize')
+      //labelWidth[node.label] = settings('labelSizeRatio') * size
     }
-    let width = (settings('labelSizeRatio') * (labelWidth[node.label]))
-    width = width * Math.sqrt(Math.sqrt(size))
+    //let width = (settings('labelSizeRatio') * (labelWidth[node.label]))
+    //width = width * Math.sqrt(Math.sqrt(size))
+    let fontSize = settings('labelSizeRatio') * size;
+    let width = Math.round(
+        labelWidth[node.label] + fontSize / 2 + size + 7
+    );
+    //if (node.label === 'Happy') {
+    //  console.log(width)
+    //}
     let x = Math.round(node[prefix + 'x'] - (width / 2) )
 
     //width = width / Math.sqrt(s.cameras[0].ratio * settings('zoomingRatio'))

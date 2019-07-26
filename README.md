@@ -5,6 +5,9 @@ Draw a network diagram from CSV data
 - Demo: https://pulipulichen.github.io/HTML5-Network-Diagram-Drawer/
 - Issues: https://github.com/pulipulichen/HTML5-Network-Diagram-Drawer/issues
 
+# Sigma.js
+https://github.com/pulipulichen/sigma.js/
+
 # ICON
 - Network Icons - Iconshock: https://www.iconshock.com/material-design-icons/general-icons/network-icon/
 

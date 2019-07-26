@@ -2,6 +2,18 @@ if (typeof(labelWidth) === 'undefined') {
   labelWidth = {}
 }
 
+/**
+ * 
+ * 參考對象 
+ * https://github.com/pulipulichen/sigma.js/blob/master/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.def.js
+ * 
+ * @param {type} edge
+ * @param {type} source
+ * @param {type} target
+ * @param {type} context
+ * @param {type} settings
+ * @returns {undefined}
+ */
 sigma.canvas.edges.labels.def =
     function(edge, source, target, context, settings) {
     if (typeof edge.label !== 'string' || source === target)
