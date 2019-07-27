@@ -158,15 +158,16 @@ let SigmaJSHelper = {
     var config = {
       directed: true,
       rankdir: 'BT',
-      //align: 'UR',
-      nodesep: 150, // node 橫向 間距
+      //align: 'DR',
+      nodesep: 300, // node 橫向 間距
       ranksep: 200,
+      //height: 400,
       //acyclicer: 'greedy',
-      ranker: 'longest-path'
-      //rankdir: 'LR'
+      ranker: 'longest-path',
+      //rankdir: 'LR',
     };
     sigma.layouts.dagre.start(s, config)
-    sigma.layouts.dagre.start(s)
+    //sigma.layouts.dagre.start(s)
     return this
   },
   startLayoutNoverlap: function (s) {
@@ -203,8 +204,8 @@ let SigmaJSHelper = {
     labelSize: "proportional",  // 不做fixed
     doubleClickEnabled: false,
     //defaultLabelAlignment: 'center',
-    sideMargin: 20,
-    //scalingMode: 'outside',
+    //sideMargin: 20,
+    scalingMode: 'outside',
     enableHovering: false,    
     //rescaleIgnoreSize: true,
     //autoRescale: false,
@@ -482,8 +483,8 @@ let SigmaJSHelper = {
         size: 30,
         color: '#cccccc',
         //color: '#66' + ((i + 1) * 3)
-        x: Math.cos(2 * i * Math.PI / n) * 100,
-        y: Math.sin(2 * i * Math.PI / n) * 100,
+        //x: Math.cos(2 * i * Math.PI / n) * 100,
+        //y: Math.sin(2 * i * Math.PI / n) * 100,
     }
   },
   mergeNodes: function (data) {

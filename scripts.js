@@ -51,8 +51,8 @@ let config = {
       $(this.$refs.select).dropdown()
 
       // 載入檔案
-      let preloadFile = './data.csv'
-      //let preloadFile = './0724-1511-number.txt'
+      //let preloadFile = './data.csv'
+      let preloadFile = './0724-1511-number.txt'
       //let preloadFile = './0724-1511-number50.txt'
       $.get(preloadFile, (data) => {
         this.input = data
