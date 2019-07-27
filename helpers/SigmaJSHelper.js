@@ -149,10 +149,19 @@ let SigmaJSHelper = {
       //var dragListener = sigma.plugins.dragNodes(ss, ss.renderers[0]);
     }, this.nodesCount * this.edgesCount * 1000)
   },
+  /**
+   * https://github.com/dagrejs/dagre/wiki
+   * @param {type} s
+   * @returns {SigmaJSHelper}
+   */
   startLayoutDagre: function (s) {
     var config = {
       directed: true,
-      rankdir: 'BT'
+      rankdir: 'BT',
+      nodesep: 100,
+      ranksep: 200,
+      //acyclicer: 'greedy',
+      ranker: 'longest-path'
       //rankdir: 'LR'
     };
     sigma.layouts.dagre.start(s, config)
@@ -461,7 +470,7 @@ let SigmaJSHelper = {
     }
   },
   mergeNodes: function (data) {
-    let mergeLabelsLengthLimitSort = 10
+    let mergeLabelsLengthLimitSort = 5
     let mergeLabelsLengthLimitHard = Math.round(mergeLabelsLengthLimitSort * 1.5)
     
     if (Array.isArray(data)) {
