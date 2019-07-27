@@ -66,6 +66,8 @@ let config = {
       //setTimeout(() => {
         //SigmaJSHelper.demo()
       //}, 0)
+      
+      $(this.$refs.menu).find('.item').tab()
     },
     persist: function () {
       VueHelper.persist(this, 'fileType')

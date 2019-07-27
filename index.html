@@ -49,72 +49,85 @@
     <div id="app"
          ref="modal">
       <form class="ui form">
-          <div class="ui container input-row">
-            <div class="two fields">
-              <div class="field">
-                <input type="file" 
-                       accept=".txt,.dat"
-                       v-on:change="upload" />
-                <button type="button"
-                        class="ui labeled icon fluid green button" 
-                        v-on:click="triggerUpload">
-                  <i class="upload icon"></i>
-                  UPLOAD
-                </button>
-              </div>
-              <div class="field">
-                <button type="button"
-                        class="ui labeled icon fluid button" 
-                        v-on:click="reset">
-                  <i class="window close icon"></i>
-                  CLEAN
-                </button>
-              </div>
-            </div>
-              
-            <div class="field"> 
-              <textarea class="input" 
-                        v-model="input" 
-                        onfocus="this.select()"></textarea>
-            </div>
-          </div>
-          <div class="ui container output-row">
-          
-            <div class="unstackable fluid fields">
-              <div class="eight wide field">
-                <div class="ui dropdown input">
-                  <button type="button"
-                          class="ui labeled icon fluid green button" 
-                          v-on:click="download">
-                    <i class="download icon"></i>
-                    DOWNLOAD SVG
-                  </button>
-                </div>
-              </div>
-              <div class="eight wide field">
-                <div class="ui dropdown input">
-                  <a href="https://blog.pulipuli.info/2018/01/svgpnginkscape-how-to-convert-svg-to.html"
-                     target="svgHelp"
-                     class="ui labeled icon fluid button" >
-                    <i class="help icon"></i>
-                    SVG HELP
-                  </a>
-                </div>
-              </div>
-            </div>
-              
-            
-            <!--
-            <div v-html="output" class="output"></div>
-            -->
-            
-            <div id="container">
-              <div id="graph-container"
-                   ref="graphContainer"></div>
-            </div>
-          </div>
-        </div>
+
+<!-- ---------------------------- -->
         
+<div class="ui top attached tabular menu" ref="menu">
+  <div class="active item" data-tab="input">Input</div>
+  <div class="item" data-tab="output">Output</div>
+</div>
+
+<!-- ---------------------------- -->        
+
+<div class="ui bottom attached active tab segment" data-tab="input">
+  <div class="two fields">
+    <div class="field">
+      <input type="file" 
+             accept=".txt,.dat"
+             v-on:change="upload" />
+      <button type="button"
+              class="ui labeled icon fluid green button" 
+              v-on:click="triggerUpload">
+        <i class="upload icon"></i>
+        UPLOAD
+      </button>
+    </div>
+    <div class="field">
+      <button type="button"
+              class="ui labeled icon fluid button" 
+              v-on:click="reset">
+        <i class="window close icon"></i>
+        CLEAN
+      </button>
+    </div>
+  </div>
+
+  <div class="field"> 
+    <textarea class="input" 
+              v-model="input" 
+              onfocus="this.select()"></textarea>
+  </div>
+</div>
+
+<!-- ------------------------------------->
+
+<div class="ui bottom attached tab segment" data-tab="output">
+
+  <div class="unstackable fluid fields">
+    <div class="eight wide field">
+      <div class="ui dropdown input">
+        <button type="button"
+                class="ui labeled icon fluid green button" 
+                v-on:click="download">
+          <i class="download icon"></i>
+          DOWNLOAD SVG
+        </button>
+      </div>
+    </div>
+    <div class="eight wide field">
+      <div class="ui dropdown input">
+        <a href="https://blog.pulipuli.info/2018/01/svgpnginkscape-how-to-convert-svg-to.html"
+           target="svgHelp"
+           class="ui labeled icon fluid button" >
+          <i class="help icon"></i>
+          SVG HELP
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!--
+  <div v-html="output" class="output"></div>
+  -->
+
+  <div id="container">
+    <div id="graph-container"
+         ref="graphContainer"></div>
+  </div>
+</div>
+
+<!-- ------------------------ -->
         
       </form>
     </div>

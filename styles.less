@@ -1,6 +1,7 @@
 #app {
   textarea.input {
-    height: calc(30vh - 7rem);
+    //height: calc(30vh - 7rem);
+    height: calc(100vh - 9rem);
     max-height: inherit;
   }
   
@@ -12,14 +13,8 @@
   input[type="file"] {
     display: none;
   }
-  
-  ui.container.input-row {
-    max-height: calc(30vh);
-    overflow-y: auto;
-  }
-  ui.container.output-row {
-    max-height: calc(70vh);
-    overflow-y: auto;
-  }
 }
-  
+
+body {
+  overflow-y: hidden;
+}
