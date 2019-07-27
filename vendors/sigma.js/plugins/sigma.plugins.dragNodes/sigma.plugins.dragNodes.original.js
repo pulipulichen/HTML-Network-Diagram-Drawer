@@ -71,7 +71,7 @@
     } else {
       _prefix = renderer.options.prefix;
     }
-    
+
     renderer.bind('overNode', nodeMouseOver);
     renderer.bind('outNode', treatOutNode);
     renderer.bind('click', click);
@@ -150,14 +150,10 @@
       _isMouseDown = true;
       var size = _s.graph.nodes().length;
 
-
       // when there is only node in the graph, the plugin cannot apply
       // linear interpolation. So treat it as if a user is dragging
       // the graph
       if (_node && size > 1) {
-        
-        //console.trace(_node)
-        
         _mouse.removeEventListener('mousedown', nodeMouseDown);
         _body.addEventListener('mousemove', nodeMouseMove);
         _body.addEventListener('mouseup', nodeMouseUp);
@@ -236,20 +232,11 @@
             cos = Math.cos(_camera.angle),
             sin = Math.sin(_camera.angle),
             nodes = _s.graph.nodes(),
-            ref = [],
-            context = _s.renderers[0].contexts['scene'];
+            ref = [];
 
         // Getting and derotating the reference coordinates.
         for (var i = 0; i < 2; i++) {
           var n = nodes[i];
-          /*
-          var aux = {
-            x: n.x * cos + n.y * sin,
-            y: n.y * cos - n.x * sin,
-            renX: n[_prefix + 'x'],
-            renY: n[_prefix + 'y'],
-          };
-          */
           var aux = {
             x: n.x * cos + n.y * sin,
             y: n.y * cos - n.x * sin,
@@ -288,9 +275,7 @@
         _node.y = y * cos + x * sin;
 
         _s.refresh();
-        
-        //console.log(event)
-        
+
         _drag = true;
         _self.dispatchEvent('drag', {
           node: _node,

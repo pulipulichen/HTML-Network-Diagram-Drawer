@@ -158,7 +158,8 @@ let SigmaJSHelper = {
     var config = {
       directed: true,
       rankdir: 'BT',
-      nodesep: 100,
+      //align: 'UR',
+      nodesep: 150, // node 橫向 間距
       ranksep: 200,
       //acyclicer: 'greedy',
       ranker: 'longest-path'
@@ -189,6 +190,27 @@ let SigmaJSHelper = {
 
     s.startNoverlap();
   },
+  /**
+   * https://github.com/jacomyal/sigma.js/wiki/Settings
+   * @type type
+   */
+  sigmaSettings: {
+    minArrowSize: 10,
+    minNodeSize: 20,
+    maxNodeSize: 20,
+    //minEdgeSize: 2,
+    maxEdgeSize: 2,
+    labelSize: "proportional",  // 不做fixed
+    doubleClickEnabled: false,
+    //defaultLabelAlignment: 'center',
+    sideMargin: 20,
+    //scalingMode: 'outside',
+    enableHovering: false,    
+    //rescaleIgnoreSize: true,
+    //autoRescale: false,
+    //autoResize: false,
+    //enableCamera: false,
+  },
   draw: function (data, container, callback) {
     //console.log(dataAAA)
     //data = JSON.parse(JSON.stringify(data))
@@ -217,17 +239,7 @@ let SigmaJSHelper = {
             type: 'canvas',
             //type: 'svg',
           },
-          settings: {
-            minArrowSize: 10,
-            minNodeSize: 20,
-            maxNodeSize: 20,
-            //minEdgeSize: 2,
-            maxEdgeSize: 2,
-            labelSize: "proportional",  // 不做fixed
-            doubleClickEnabled: false,
-            //defaultLabelAlignment: 'center',
-            sideMargin: 20,
-          }
+          settings: this.sigmaSettings
         });
       
       this.enableDrag(s)
@@ -253,6 +265,8 @@ let SigmaJSHelper = {
         s.cleanUp()
       })
       
+      this.setViewWholeGraph(s)
+      
       
       if (typeof(callback) === 'function') {
         //console.log(s)
@@ -261,6 +275,9 @@ let SigmaJSHelper = {
       }
       
     })
+  },
+  setViewWholeGraph: function (s) {
+    let camera = s.camera
   },
   cleanUp: function (svg) {
     let rect = $(svg).find('g > rect[fill="#FFFFFF"][stroke="none"][x="0"][y="0"]:last')

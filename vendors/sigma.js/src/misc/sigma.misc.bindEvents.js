@@ -27,7 +27,10 @@
         mX = 'x' in e.data ? e.data.x : mX;
         mY = 'y' in e.data ? e.data.y : mY;
       }
-
+      
+      //console.log(self.contexts['scene'].measureText)
+      let context = self.contexts['scene']
+      
       var i,
           j,
           l,
@@ -53,9 +56,14 @@
           n = nodes[i];
           x = n[prefix + 'x'];
           y = n[prefix + 'y'];
-          s = n[prefix + 'size'];
+          s = n[prefix + 'size'] * 20;
 
-          if (
+          if (n.hidden) {
+            continue;
+          }
+
+          /*
+          let matchPoint = (
             !n.hidden &&
             modifiedX > x - s &&
             modifiedX < x + s &&
@@ -65,9 +73,32 @@
               Math.pow(modifiedX - x, 2) +
               Math.pow(modifiedY - y, 2)
             ) < s
-          ) {
+          )
+          */
+  
+          let width = context.measureText(n.label).width / 2
+          let matchRoundRect = (
+            modifiedX > x - s - width &&
+            modifiedX < x + s + width &&
+            modifiedY > y - s &&
+            modifiedY < y + s
+          )
+  
+          //if (n.label === 'Happy') {
+          //  console.log([matchRoundRect, x, y, s, width, context.measureText(n.label)])
+          //}
+          //console.log([matchRoundRect])
+          
+
+          if (matchRoundRect) {
             // Insert the node:
             inserted = false;
+            /*
+            if (n.label === 'Happy') {
+              console.log([modifiedX, x, s, Math.pow(modifiedX - x, 2)])
+              console.log([modifiedY, y, s, Math.pow(modifiedY - y, 2)])
+            }
+            */
 
             for (j = 0; j < selected.length; j++)
               if (n.size > selected[j].size) {

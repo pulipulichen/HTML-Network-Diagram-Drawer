@@ -153,7 +153,7 @@
         _isMouseDown = false;
         if (_movingTimeoutId)
           clearTimeout(_movingTimeoutId);
-
+        
         _camera.isMoving = false;
 
         var x = sigma.utils.getX(e),
@@ -182,7 +182,6 @@
             x: _camera.x,
             y: _camera.y
           });
-
         _self.dispatchEvent('mouseup',
           sigma.utils.mouseCoords(e));
 
@@ -225,7 +224,6 @@
           default:
             // Left mouse button pressed
             _isMouseDown = true;
-
             _self.dispatchEvent('mousedown',
               sigma.utils.mouseCoords(e, _startMouseX, _startMouseY));
         }
