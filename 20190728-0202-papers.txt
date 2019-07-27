@@ -1,0 +1,36 @@
+=== Run information ===
+
+Scheme:       weka.associations.FPGrowth -P 2 -I -1 -N 10 -T 0 -C 0.1 -D 0.05 -U 1.0 -M 0.00193236715 -S
+Relation:     20190728-0143-output-keywords - Copy (2)-weka.filters.unsupervised.attribute.NominalToString-Clast-weka.filters.unsupervised.attribute.StringToWordVector-R1-W1000000-prune-rate-1.0-N0-stemmerweka.core.stemmers.NullStemmer-stopwords-handlerweka.core.stopwords.Null-M1-tokenizerweka.core.tokenizers.WordTokenizer -delimiters " \r\n\t.,;:\'\"()?!"-weka.filters.unsupervised.attribute.NumericToNominal-Rfirst-last
+Instances:    1035
+Attributes:   2453
+              [list of attributes omitted]
+=== Associator model (full training set) ===
+
+FPGrowth found 24 rules
+
+ 1. [效度=1]: 6 ==> [信度=1]: 6   <conf:(1)> lift:(172.5) lev:(0.01) conv:(5.97) 
+ 2. [信度=1]: 6 ==> [效度=1]: 6   <conf:(1)> lift:(172.5) lev:(0.01) conv:(5.97) 
+ 3. [跨理論模式=1]: 3 ==> [行為改變=1]: 3   <conf:(1)> lift:(258.75) lev:(0) conv:(2.99) 
+ 4. [免疫抑制劑=1]: 3 ==> [腎臟移植=1]: 3   <conf:(1)> lift:(258.75) lev:(0) conv:(2.99) 
+ 5. [危機管理=1]: 3 ==> [危機=1]: 3   <conf:(1)> lift:(258.75) lev:(0) conv:(2.99) 
+ 6. [困難靜脈注射=1]: 3 ==> [周邊靜脈注射=1]: 3   <conf:(1)> lift:(345) lev:(0) conv:(2.99) 
+ 7. [周邊靜脈注射=1]: 3 ==> [困難靜脈注射=1]: 3   <conf:(1)> lift:(345) lev:(0) conv:(2.99) 
+ 8. [行為改變=1]: 4 ==> [糖尿病=1]: 3   <conf:(0.75)> lift:(97.03) lev:(0) conv:(1.98) 
+ 9. [行為=1]: 4 ==> [知識=1]: 3   <conf:(0.75)> lift:(155.25) lev:(0) conv:(1.99) 
+10. [行為改變=1]: 4 ==> [跨理論模式=1]: 3   <conf:(0.75)> lift:(258.75) lev:(0) conv:(1.99) 
+11. [腎臟移植=1]: 4 ==> [免疫抑制劑=1]: 3   <conf:(0.75)> lift:(258.75) lev:(0) conv:(1.99) 
+12. [危機=1]: 4 ==> [危機管理=1]: 3   <conf:(0.75)> lift:(258.75) lev:(0) conv:(1.99) 
+13. [運動=1]: 5 ==> [糖尿病=1]: 3   <conf:(0.6)> lift:(77.63) lev:(0) conv:(1.65) 
+14. [知識=1]: 5 ==> [行為=1]: 3   <conf:(0.6)> lift:(155.25) lev:(0) conv:(1.66) 
+15. [氣喘=1]: 6 ==> [兒童=1]: 3   <conf:(0.5)> lift:(51.75) lev:(0) conv:(1.49) 
+16. [焦慮=1]: 8 ==> [憂鬱=1]: 3   <conf:(0.38)> lift:(35.28) lev:(0) conv:(1.32) 
+17. [糖尿病=1]: 8 ==> [運動=1]: 3   <conf:(0.38)> lift:(77.63) lev:(0) conv:(1.33) 
+18. [糖尿病=1]: 8 ==> [行為改變=1]: 3   <conf:(0.38)> lift:(97.03) lev:(0) conv:(1.33) 
+19. [家庭=1]: 9 ==> [壓力=1]: 3   <conf:(0.33)> lift:(38.33) lev:(0) conv:(1.27) 
+20. [壓力=1]: 9 ==> [家庭=1]: 3   <conf:(0.33)> lift:(38.33) lev:(0) conv:(1.27) 
+21. [主要照顧者=1]: 10 ==> [生活品質=1]: 3   <conf:(0.3)> lift:(17.25) lev:(0) conv:(1.23) 
+22. [兒童=1]: 10 ==> [氣喘=1]: 3   <conf:(0.3)> lift:(51.75) lev:(0) conv:(1.24) 
+23. [憂鬱=1]: 11 ==> [焦慮=1]: 3   <conf:(0.27)> lift:(35.28) lev:(0) conv:(1.21) 
+24. [生活品質=1]: 18 ==> [主要照顧者=1]: 3   <conf:(0.17)> lift:(17.25) lev:(0) conv:(1.11) 
+

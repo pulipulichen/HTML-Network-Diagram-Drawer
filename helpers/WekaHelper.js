@@ -26,6 +26,11 @@ let WekaHelper = {
       let size = fields[2].slice(fields[2].lastIndexOf('(')+1, fields[2].lastIndexOf(')'))
       size = parseInt(size, 10)
       
+      /**
+       * @author Pulipuli Chen 20190728 先暫時不要考慮size看看
+       */
+      size = 1
+      
       let edgeLabel = ''
       if (size > 2) {
         edgeLabel = size
@@ -39,7 +44,7 @@ let WekaHelper = {
       })
     })
     
-    //console.log(output)
+    console.log(output)
     //return []
     
     return output

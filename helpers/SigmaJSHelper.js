@@ -158,13 +158,13 @@ let SigmaJSHelper = {
   startLayoutDagre: function (s) {
     var config = {
       directed: true,
-      rankdir: 'BT',
-      align: 'UL',
-      nodesep: 400, // node 橫向 間距
-      ranksep: 200,
+      rankdir: 'RL',
+      //align: 'DR',
+      nodesep: 100, // node 橫向 間距
+      ranksep: 800,
       //height: 400,
-      acyclicer: 'greedy',
-      ranker: 'tight-tree', // network-simplex, tight-tree, longest-path
+      //acyclicer: 'greedy',
+      ranker: 'network-simplex', // network-simplex, tight-tree, longest-path
       //rankdir: 'LR',
     };
     sigma.layouts.dagre.start(s, config)

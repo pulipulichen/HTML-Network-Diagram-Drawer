@@ -52,8 +52,12 @@ let config = {
 
       // 載入檔案
       //let preloadFile = './data.csv'
-      let preloadFile = './0724-1511-number.txt'
+      //let preloadFile = './0724-1511-number.txt'
       //let preloadFile = './0724-1511-number50.txt'
+      //let preloadFile = './20190728-0202-papers.txt'
+      //let preloadFile = './20190728-0213-papers_lift147.txt'
+      let preloadFile = './20190728-0213-papers_lift54.txt' // 先用conv排序，然後再篩選lift高於54的資料
+      //let preloadFile = './20190728-0213-papers_lift54_reverse.txt'
       $.get(preloadFile, (data) => {
         this.input = data
       })

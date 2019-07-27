@@ -1,5 +1,5 @@
 
-  sigma.misc.bindEvents = function(prefix) {
+  sigma.misc.bindEventsDisabled = function(prefix) {
     var i,
         l,
         mX,
