@@ -158,8 +158,8 @@ let SigmaJSHelper = {
     var config = {
       directed: true,
       rankdir: 'BT',
-      //align: 'DR',
-      nodesep: 300, // node 橫向 間距
+      align: 'UL',
+      nodesep: 400, // node 橫向 間距
       ranksep: 200,
       //height: 400,
       //acyclicer: 'greedy',
@@ -201,15 +201,16 @@ let SigmaJSHelper = {
     maxNodeSize: 20,
     //minEdgeSize: 2,
     maxEdgeSize: 2,
+    zoomMax: 100,
     labelSize: "proportional",  // 不做fixed
     doubleClickEnabled: false,
     //defaultLabelAlignment: 'center',
     //sideMargin: 20,
     scalingMode: 'outside',
     enableHovering: false,    
-    //rescaleIgnoreSize: true,
-    //autoRescale: false,
-    //autoResize: false,
+    rescaleIgnoreSize: false,
+    autoRescale: false,
+    autoResize: false,
     //enableCamera: false,
   },
   draw: function (data, container, callback) {
