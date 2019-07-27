@@ -65,12 +65,11 @@ let drawRoundRectNode = function (node, context, settings) {
         (context.measureText(node.label).width + fontSize)
     );
     
-    if (node.label === 'Happy') {
-      console.log([node.label, context.measureText(node.label).width, fontSize, size, width])
+    //if (node.label === 'Happy') {
+      //console.log([node.label, context.measureText(node.label).width, fontSize, size, width])
       //width = 72
       // 差20
-      
-    }
+    //}
     let x = Math.round(node[prefix + 'x'] - (width / 2) )
 
     //width = width / Math.sqrt(s.cameras[0].ratio * settings('zoomingRatio'))

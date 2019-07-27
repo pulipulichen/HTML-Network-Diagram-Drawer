@@ -255,8 +255,29 @@ let SigmaJSHelper = {
   },
   cleanUp: function (svg) {
     let rect = $(svg).find('g > rect[fill="#FFFFFF"][stroke="none"][x="0"][y="0"]:last')
-    rect.prevAll().remove()
-    rect.remove()
+    if (rect.length > 0) {
+      for (let i = 0; i < 10; i++) {
+        rect.prev().remove()
+      }
+    }
+    
+    if (rect.prev().length === 0) {
+      rect.remove()
+    }
+    else {
+      setTimeout(() => {
+        this.cleanUp(svg)
+      }, 0)
+    }
+    
+    //rect.prevAll().remove()
+    //rect.remove()
+    // 改用延遲法
+    //let loop = () => {
+      
+    //}
+    //loop()
+    
     return this
   },
   loadGraph: function (data) {
@@ -580,7 +601,7 @@ let SigmaJSHelper = {
       //console.log(overlapMap)
       //console.log(overlapCheck)
       
-      console.log(data)
+      //console.log(data)
     }
     
     return data

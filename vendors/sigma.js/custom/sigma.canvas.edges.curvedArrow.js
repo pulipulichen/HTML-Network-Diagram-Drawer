@@ -36,6 +36,20 @@ sigma.canvas.edges.curvedArrow = function (edge, source, target, context, settin
     vX = (tX - cp.x1) * aSize / d;
     vY = (tY - cp.y1) * aSize / d;
   } else {
+    if (source.label === 'Happy' && target.label === 'World') {
+      //console.log([sX, sY, tX, tY])
+      //tX = tX - context.measureText(target.label).width
+      //console.log(["t",sigma.utils.getAngle(sX, sY, tX, tY), (tY - sY), tY, sY, (tX - sX), tX, sX])
+      //console.log(["a",sX, sY, tX, tY])
+      //console.log(["a", sigma.utils.getAngle(sX, sY, aX, aY), (aY - sY), tY, sY, (aX - sX), aX, sX])
+      //console.log(["a", sigma.utils.getAngle(sX, sY, aX, aY), (aY - vY), aY, vY, (aX - vX), aX, vX])
+      //console.log([sigma.utils.getAngle(sX, sY, tX, tY), sigma.utils.adjustTargetXbyAngle(sX, sY, tX, tY), sigma.utils.adjustTargetYbyAngle(sX, sY, tX, tY), tSize])
+    }
+    let adjustX = sigma.utils.adjustTargetXbyAngle(sX, sY, tX, tY)
+    let adjustY = sigma.utils.adjustTargetYbyAngle(sX, sY, tX, tY)
+    tX = tX + (width * adjustX / 2);
+    //tY = tY + (tSize * adjustY);
+    
     d = Math.sqrt(Math.pow(tX - cp.x, 2) + Math.pow(tY - cp.y, 2));
     aX = cp.x + (tX - cp.x) * (d - aSize - tSize) / d;
     //if ( (sX > tX) ) {
@@ -61,19 +75,11 @@ sigma.canvas.edges.curvedArrow = function (edge, source, target, context, settin
     //}
 
     aY = cp.y + (tY - cp.y) * (d - aSize - tSize) / d;
-    
-    
-    if (source.label === 'Happy' && target.label === 'World') {
-      //console.log([sX, sY, tX, tY])
-      //tX = tX - context.measureText(target.label).width
-      console.log(["t",sigma.utils.getAngle(sX, sY, tX, tY), (tY - sY), tY, sY, (tX - sX), tX, sX])
-      //console.log(["a", sigma.utils.getAngle(sX, sY, aX, aY), (aY - sY), tY, sY, (aX - sX), aX, sX])
-    }
-    let adjust = sigma.utils.adjustTargetXbyAngle(sX, sY, tX, tY)
-    aX = aX + (width * adjust / 2);
+    aY = aY + (tSize / 2 * adjustY);
     
     vX = (tX - cp.x) * aSize / d;
     vY = (tY - cp.y) * aSize / d;
+    
   }
 
   if (!color)
