@@ -71,6 +71,7 @@ let SigmaJSHelper = {
     "vendors/sigma.js/custom/sigma.canvas.edges.curvedArrow.js",
     "vendors/sigma.js/custom/sigma.canvas.edges.labels.curvedArrow.js",
     "vendors/sigma.js/custom/sigma.canvas.edges.labels.js",
+    "vendors/sigma.js/custom/sigma.utils.angle.js"
     
     //"vendors/sigma.js/plugins/sigma.exporters.svg/sigma.exporters.svg.js",
     //"vendors/sigma.js/gist/sigma.image.js",
@@ -365,7 +366,10 @@ let SigmaJSHelper = {
   buildEdge: function (edgeId, edgeLabel, sourceNodeId, targetNodeId, size, type, count) {
     return {
       id: 'edge' + edgeId,
-      label: edgeLabel,
+      /**
+       * @author Pulipuli Chen 20190727 先不要做Edge Label，不然會做不完
+       */
+      //label: edgeLabel,
       source: sourceNodeId,
       target: targetNodeId,
       size: size,

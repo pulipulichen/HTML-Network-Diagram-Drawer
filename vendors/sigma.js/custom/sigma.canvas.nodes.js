@@ -9,7 +9,31 @@ if (typeof(labelWidth) === 'undefined') {
  * @param {type} settings
  * @returns {undefined}
  */
-sigma.canvas.nodes.defAAA = function(node, context, settings) {
+sigma.canvas.nodes.def = function(node, context, settings) {
+  //drawPointNode(node, context, settings)
+  drawRoundRectNode(node, context, settings)
+};
+
+let drawPointNode = function (node, context, settings) {
+  var prefix = settings('prefix') || '';
+
+  context.fillStyle = node.color || settings('defaultNodeColor');
+  context.beginPath();
+  context.arc(
+    node[prefix + 'x'],
+    node[prefix + 'y'],
+    node[prefix + 'size'],
+    0,
+    Math.PI * 2,
+    true
+  );
+
+  context.closePath();
+  context.fill();
+}
+
+
+let drawRoundRectNode = function (node, context, settings) {
   var prefix = settings('prefix') || '',
       size = node[prefix + 'size']
   
@@ -38,11 +62,15 @@ sigma.canvas.nodes.defAAA = function(node, context, settings) {
     //width = width * Math.sqrt(Math.sqrt(size))
     let fontSize = settings('labelSizeRatio') * size;
     let width = Math.round(
-        labelWidth[node.label] + fontSize / 2 + size + 7
+        (context.measureText(node.label).width + fontSize)
     );
-    //if (node.label === 'Happy') {
-    //  console.log(width)
-    //}
+    
+    if (node.label === 'Happy') {
+      console.log([node.label, context.measureText(node.label).width, fontSize, size, width])
+      //width = 72
+      // 差20
+      
+    }
     let x = Math.round(node[prefix + 'x'] - (width / 2) )
 
     //width = width / Math.sqrt(s.cameras[0].ratio * settings('zoomingRatio'))
@@ -54,9 +82,9 @@ sigma.canvas.nodes.defAAA = function(node, context, settings) {
       //console.log(window.devicePixelRatio)
       //console.log([size, width, settings('labelSizeRatio'), context.measureText(node.label).width])
     }
-    //let height = size * 2
-    let height = settings('labelSizeRatio')
-    height = width / node.label.length * 2
+    let height = size * 1.5
+    //let height = settings('labelSizeRatio')
+    //height = width / node.label.length * 2
     let y = Math.round(node[prefix + 'y'] - (height/2))
 
     let radius = height / 2
@@ -84,8 +112,7 @@ sigma.canvas.nodes.defAAA = function(node, context, settings) {
     */
   //}
   roundRect(context, x, y, width, height, radius, fill, stroke)
-};
-
+}
 
 /**
  * Draws a rounded rectangle using the current state of the canvas.
