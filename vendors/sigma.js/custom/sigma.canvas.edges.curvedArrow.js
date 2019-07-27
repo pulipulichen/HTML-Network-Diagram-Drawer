@@ -23,10 +23,8 @@ sigma.canvas.edges.curvedArrow = function (edge, source, target, context, settin
           sigma.utils.getSelfLoopControlPoints(sX, sY, tSize) :
           sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY);
 
-  let fontSize = settings('labelSizeRatio') * size;
-  let width = Math.round(
-          (context.measureText(target.label).width)
-          );
+  //let fontSize = settings('labelSizeRatio') * size;
+  let width = Math.round(context.measureText(target.label).width);
 
   if (source.id === target.id) {
     d = Math.sqrt(Math.pow(tX - cp.x1, 2) + Math.pow(tY - cp.y1, 2));
