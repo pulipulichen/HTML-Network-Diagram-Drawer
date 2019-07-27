@@ -159,12 +159,12 @@ let SigmaJSHelper = {
     var config = {
       directed: true,
       rankdir: 'RL',
-      //align: 'DR',
+      //align :'UL',
       nodesep: 100, // node 橫向 間距
       ranksep: 800,
       //height: 400,
       //acyclicer: 'greedy',
-      ranker: 'network-simplex', // network-simplex, tight-tree, longest-path
+      ranker: 'longest-path', // network-simplex, tight-tree, longest-path
       //rankdir: 'LR',
     };
     sigma.layouts.dagre.start(s, config)
@@ -486,8 +486,8 @@ let SigmaJSHelper = {
         size: 30,
         color: '#cccccc',
         //color: '#66' + ((i + 1) * 3)
-        //x: Math.cos(2 * i * Math.PI / n) * 100,
-        //y: Math.sin(2 * i * Math.PI / n) * 100,
+        x: Math.cos(2 * i * Math.PI / n) * 100,
+        y: Math.sin(2 * i * Math.PI / n) * 100,
     }
   },
   mergeNodes: function (data) {
