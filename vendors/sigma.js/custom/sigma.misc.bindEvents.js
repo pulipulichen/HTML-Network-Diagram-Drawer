@@ -1,19 +1,4 @@
-;(function(undefined) {
-  'use strict';
 
-  if (typeof sigma === 'undefined')
-    throw 'sigma is not declared';
-
-  // Initialize packages:
-  sigma.utils.pkg('sigma.misc');
-
-  /**
-   * This helper will bind any no-DOM renderer (for instance canvas or WebGL)
-   * to its captors, to properly dispatch the good events to the sigma instance
-   * to manage clicking, hovering etc...
-   *
-   * It has to be called in the scope of the related renderer.
-   */
   sigma.misc.bindEvents = function(prefix) {
     var i,
         l,
@@ -27,7 +12,10 @@
         mX = 'x' in e.data ? e.data.x : mX;
         mY = 'y' in e.data ? e.data.y : mY;
       }
-
+      
+      //console.log(self.contexts['scene'].measureText)
+      let context = self.contexts['scene']
+      
       var i,
           j,
           l,
@@ -53,9 +41,14 @@
           n = nodes[i];
           x = n[prefix + 'x'];
           y = n[prefix + 'y'];
-          s = n[prefix + 'size'];
+          s = n[prefix + 'size'] * 20;
 
-          if (
+          if (n.hidden) {
+            continue;
+          }
+
+          /*
+          let matchPoint = (
             !n.hidden &&
             modifiedX > x - s &&
             modifiedX < x + s &&
@@ -65,9 +58,32 @@
               Math.pow(modifiedX - x, 2) +
               Math.pow(modifiedY - y, 2)
             ) < s
-          ) {
+          )
+          */
+  
+          let width = context.measureText(n.label).width / 2
+          let matchRoundRect = (
+            modifiedX > x - s - width &&
+            modifiedX < x + s + width &&
+            modifiedY > y - s &&
+            modifiedY < y + s
+          )
+  
+          //if (n.label === 'Happy') {
+          //  console.log([matchRoundRect, x, y, s, width, context.measureText(n.label)])
+          //}
+          //console.log([matchRoundRect])
+          
+
+          if (matchRoundRect) {
             // Insert the node:
             inserted = false;
+            /*
+            if (n.label === 'Happy') {
+              console.log([modifiedX, x, s, Math.pow(modifiedX - x, 2)])
+              console.log([modifiedY, y, s, Math.pow(modifiedY - y, 2)])
+            }
+            */
 
             for (j = 0; j < selected.length; j++)
               if (n.size > selected[j].size) {
@@ -506,4 +522,3 @@
     for (i = 0, l = this.captors.length; i < l; i++)
       bindCaptor(this.captors[i]);
   };
-}).call(this);

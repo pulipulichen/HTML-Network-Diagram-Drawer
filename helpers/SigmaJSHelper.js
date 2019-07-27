@@ -71,7 +71,8 @@ let SigmaJSHelper = {
     "vendors/sigma.js/custom/sigma.canvas.edges.curvedArrow.js",
     "vendors/sigma.js/custom/sigma.canvas.edges.labels.curvedArrow.js",
     "vendors/sigma.js/custom/sigma.canvas.edges.labels.js",
-    "vendors/sigma.js/custom/sigma.utils.angle.js"
+    "vendors/sigma.js/custom/sigma.utils.angle.js",
+    "vendors/sigma.js/custom/sigma.misc.bindEvents.js",
     
     //"vendors/sigma.js/plugins/sigma.exporters.svg/sigma.exporters.svg.js",
     //"vendors/sigma.js/gist/sigma.image.js",
@@ -162,8 +163,8 @@ let SigmaJSHelper = {
       nodesep: 400, // node 橫向 間距
       ranksep: 200,
       //height: 400,
-      //acyclicer: 'greedy',
-      ranker: 'longest-path',
+      acyclicer: 'greedy',
+      ranker: 'tight-tree', // network-simplex, tight-tree, longest-path
       //rankdir: 'LR',
     };
     sigma.layouts.dagre.start(s, config)
@@ -211,6 +212,7 @@ let SigmaJSHelper = {
     rescaleIgnoreSize: false,
     autoRescale: false,
     autoResize: false,
+    labelThreshold: 0,
     //enableCamera: false,
   },
   draw: function (data, container, callback) {
