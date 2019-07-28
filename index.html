@@ -94,8 +94,8 @@
 <div class="ui bottom attached active tab segment" data-tab="output">
 
   <div class="unstackable fluid fields">
-    <div class="eight wide field">
-      <div class="ui dropdown input">
+    <div class="field">
+      <div class="ui input">
         <button type="button"
                 class="ui labeled icon fluid green button" 
                 v-on:click="download">
@@ -104,7 +104,17 @@
         </button>
       </div>
     </div>
-    <div class="eight wide field">
+    <div class="field" v-if="typeof(associationRunInformation) === 'object'">
+      <div class="ui input">
+        <button type="button"
+                class="ui labeled icon fluid green button" 
+                v-on:click="downloadCSV">
+          <i class="download icon"></i>
+          DOWNLOAD CSV
+        </button>
+      </div>
+    </div>
+    <div class="field">
       <div class="ui dropdown input">
         <a href="https://blog.pulipuli.info/2018/01/svgpnginkscape-how-to-convert-svg-to.html"
            target="svgHelp"

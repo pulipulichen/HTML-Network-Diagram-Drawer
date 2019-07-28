@@ -42,6 +42,39 @@ let CSVHelper = {
       }
     }
     return str
+  },
+  parseArrayToString: function (array) {
+    if (Array.isArray(array) === false || array.length === 0) {
+      return ''
+    }
+    
+    let fieldList = []
+    let fieldRow = []
+    for (let key in array[0]) {
+      fieldList.push(key)
+      
+      if (key.indexOf('"') > -1) {
+        key = key.split('"').join('\"')
+      }
+      key = `"${key}"`
+      fieldRow.push(key)
+    }
+    let rows = [fieldRow.join(',')]
+        
+    array.forEach(rowObject => {
+      let rowArray = []
+      fieldList.forEach(key => {
+        let value = rowObject[key]
+        //console.log(rowObject, key)
+        if (typeof(value) === 'string' && value.indexOf('"') > -1) {
+          value = value.split('"').join('\"')
+        }
+        value = `"${value}"`
+        rowArray.push(value)
+      })
+      rows.push(rowArray.join(','))
+    })
+    return rows.join('\n')
   }
 }
 
